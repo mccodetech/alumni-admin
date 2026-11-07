@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alumni Admin Dashboard</title>
+    <title>FAHM Alumni Portal</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
@@ -11,54 +11,45 @@
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-slate-50 font-sans text-slate-800 antialiased">
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen">
 
-    <!-- Login Section -->
-    <div id="loginSection" class="min-h-screen flex items-center justify-center px-4">
-        <div class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full border border-slate-100">
-            <div class="text-center mb-6">
-                <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-blue-100 text-blue-900 mb-3">
-                    <i class="fa-solid fa-user-shield text-2xl"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-blue-900">Admin Login</h2>
-                <p class="text-sm text-slate-500 mt-1">Manage alumni database securely</p>
-            </div>
-            
-            <form id="loginForm" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-semibold mb-1 text-slate-700">Admin Email</label>
-                    <input type="email" id="adminEmail" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm transition" placeholder="admin@example.com">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-1 text-slate-700">Password</label>
-                    <input type="password" id="adminPassword" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm transition" placeholder="Enter password">
-                </div>
-                <button type="submit" id="loginBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-800 text-white font-semibold rounded-xl shadow-lg transition">
-                    Login
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Admin Dashboard Section -->
-    <div id="dashboardSection" class="hidden min-h-screen p-4 md:p-8 max-w-7xl mx-auto">
-        <header class="bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-800 text-white py-5 px-6 rounded-2xl shadow-md flex flex-wrap justify-between items-center gap-4 mb-6">
-            <div>
-                <h1 class="text-xl md:text-2xl font-bold">Alumni Admin Dashboard</h1>
-                <p id="userEmailBadge" class="text-xs text-blue-200 mt-0.5"></p>
-            </div>
+    <!-- Top Navigation Bar -->
+    <nav class="bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-800 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center gap-3">
-                <button onclick="exportToCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition shadow flex items-center gap-2">
-                    <i class="fa-solid fa-file-excel"></i> Export CSV
-                </button>
-                <button onclick="openAddModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-xl transition shadow flex items-center gap-2">
-                    <i class="fa-solid fa-plus"></i> Add Alumni
-                </button>
-                <button onclick="logout()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold rounded-xl transition shadow flex items-center gap-2">
-                    <i class="fa-solid fa-right-from-bracket"></i> Logout
-                </button>
+                <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-xl text-blue-200">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">FAHM ALUMNI</h1>
+                    <p class="text-xs text-blue-200">Public Directory & Connect</p>
+                </div>
             </div>
-        </header>
+
+            <div class="flex items-center gap-2" id="navActions">
+                <!-- Shown when NOT logged in -->
+                <button id="showLoginModalBtn" onclick="openLoginModal()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm font-semibold rounded-xl transition border border-white/20 flex items-center gap-2">
+                    <i class="fa-solid fa-lock text-xs"></i> Admin Login
+                </button>
+
+                <!-- Shown when logged in as ADMIN (hidden by default) -->
+                <div id="adminActions" class="hidden flex flex-wrap items-center gap-2">
+                    <span id="adminBadge" class="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 px-3 py-1.5 rounded-lg hidden sm:inline-block">Admin Mode</span>
+                    <button onclick="exportToCSV()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition shadow flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-excel"></i> Export CSV
+                    </button>
+                    <button onclick="openAddModal()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-xl transition shadow flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus"></i> Add Alumni
+                    </button>
+                    <button onclick="logoutAdmin()" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl transition shadow flex items-center gap-1.5">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto p-4 sm:p-6 md:p-8">
 
         <!-- Stats Overview Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
@@ -76,7 +67,7 @@
                     <i class="fa-solid fa-graduation-cap"></i>
                 </div>
                 <div>
-                    <div class="text-xs text-slate-500 font-medium">Unique Batches</div>
+                    <div class="text-xs text-slate-500 font-medium">Batches</div>
                     <div id="statBatches" class="text-2xl font-bold text-slate-800">0</div>
                 </div>
             </div>
@@ -92,19 +83,19 @@
         </div>
 
         <!-- Search Controls -->
-        <div class="bg-white rounded-2xl shadow-sm p-4 mb-6 border border-slate-100 flex flex-col md:flex-row gap-4 justify-between items-center">
+        <div class="bg-white rounded-2xl shadow-sm p-4 mb-6 border border-slate-100 flex flex-col md:flex-row gap-3 justify-between items-center">
             <div class="w-full md:w-1/2 relative">
                 <i class="fa-solid fa-search absolute left-4 top-3.5 text-slate-400"></i>
-                <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Search by name, membership no, mobile..." class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
+                <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Search by name, mobile, place, membership no..." class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
             </div>
             <div class="w-full md:w-1/2 flex gap-3">
-                <input type="text" id="filterBatch" onkeyup="filterData()" placeholder="Filter Batch" class="w-1/2 px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
+                <input type="text" id="filterBatch" onkeyup="filterData()" placeholder="Filter Batch (eg: D2)" class="w-1/2 px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
                 <input type="text" id="filterDistrict" onkeyup="filterData()" placeholder="Filter District" class="w-1/2 px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
             </div>
         </div>
 
-        <!-- Table -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        <!-- Directory Table View (Desktop & Tablet) -->
+        <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -112,20 +103,53 @@
                             <th class="p-3.5">Memb. No</th>
                             <th class="p-3.5">Name</th>
                             <th class="p-3.5">Batch</th>
-                            <th class="p-3.5">Mobile</th>
                             <th class="p-3.5">District</th>
                             <th class="p-3.5">Place</th>
-                            <th class="p-3.5 text-center">Action</th>
+                            <th class="p-3.5 text-center">Contact / Connect</th>
+                            <th id="adminActionHeader" class="p-3.5 text-center hidden">Admin Action</th>
                         </tr>
                     </thead>
                     <tbody id="alumniTableBody" class="text-sm divide-y divide-slate-100"></tbody>
                 </table>
             </div>
         </div>
+
+        <!-- Mobile Card View -->
+        <div id="alumniCardsContainer" class="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+
+    </main>
+
+    <!-- Admin Login Modal -->
+    <div id="loginModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 max-w-sm w-full border border-slate-100 relative">
+            <button onclick="closeLoginModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="text-center mb-5">
+                <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-900 mb-2">
+                    <i class="fa-solid fa-user-shield text-xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-blue-900">Admin Login</h3>
+                <p class="text-xs text-slate-500">Enter admin credentials to manage records</p>
+            </div>
+            <form id="adminLoginForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-slate-700">Admin Email</label>
+                    <input type="email" id="modalAdminEmail" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm" placeholder="admin@example.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-slate-700">Password</label>
+                    <input type="password" id="modalAdminPassword" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm" placeholder="Password">
+                </div>
+                <button type="submit" id="loginModalBtn" class="w-full py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-semibold rounded-xl text-sm transition shadow-md">
+                    Sign In
+                </button>
+            </form>
+        </div>
     </div>
 
-    <!-- Modal for Add/Edit -->
-    <div id="alumniModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+    <!-- Modal for Add / Edit Alumni (Admin Only) -->
+    <div id="alumniModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl">
             <div class="flex justify-between items-center mb-4">
                 <h3 id="modalTitle" class="text-lg font-bold text-blue-900">Alumni Details</h3>
@@ -148,7 +172,7 @@
                     <input type="text" id="formFullName" required class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold mb-1 text-slate-600">Mobile Number</label>
+                    <label class="block text-xs font-semibold mb-1 text-slate-600">Mobile Number (eg: 9847000000)</label>
                     <input type="text" id="formMobile" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
@@ -157,7 +181,7 @@
                         <input type="text" id="formDistrict" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold mb-1 text-slate-600">Place</label>
+                        <label class="block text-xs font-semibold mb-1 text-slate-600">Place / Panchayat</label>
                         <input type="text" id="formPlace" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
                     </div>
                 </div>
@@ -177,48 +201,45 @@
         const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let allAlumniData = [];
+        let isAdminLoggedIn = false;
 
-        // Check active session using Supabase Auth
+        // Clean phone number for WhatsApp/Call
+        function cleanNumber(num) {
+            if (!num) return '';
+            let cleaned = num.toString().replace(/[^0-9]/g, '');
+            if (cleaned.length === 10) cleaned = '91' + cleaned;
+            return cleaned;
+        }
+
         window.addEventListener('DOMContentLoaded', async () => {
+            // Check if admin is already logged in
             const { data: { session } } = await _supabase.auth.getSession();
-            if (session) {
-                showDashboard(session.user.email);
-            }
-        });
-
-        // Login Handler
-        const loginForm = document.getElementById('loginForm');
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('adminEmail').value;
-            const password = document.getElementById('adminPassword').value;
-            const btn = document.getElementById('loginBtn');
-
-            btn.disabled = true;
-            btn.innerText = "Verifying...";
-
-            const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
-
-            btn.disabled = false;
-            btn.innerText = "Login";
-
-            if (error) {
-                alert('ലോഗിൻ പരാജയപ്പെട്ടു: ' + error.message);
-            } else {
-                showDashboard(data.user.email);
-            }
-        });
-
-        function showDashboard(email) {
-            document.getElementById('loginSection').classList.add('hidden');
-            document.getElementById('dashboardSection').classList.remove('hidden');
-            document.getElementById('userEmailBadge').innerText = 'Logged in as: ' + email;
+            setAdminState(!!session);
             loadAlumniData();
+        });
+
+        function setAdminState(isAdmin) {
+            isAdminLoggedIn = isAdmin;
+            const loginBtn = document.getElementById('showLoginModalBtn');
+            const adminActions = document.getElementById('adminActions');
+            const adminHeader = document.getElementById('adminActionHeader');
+
+            if (isAdmin) {
+                loginBtn.classList.add('hidden');
+                adminActions.classList.remove('hidden');
+                adminHeader.classList.remove('hidden');
+            } else {
+                loginBtn.classList.remove('hidden');
+                adminActions.classList.add('hidden');
+                adminHeader.classList.add('hidden');
+            }
         }
 
         async function loadAlumniData() {
             const tbody = document.getElementById('alumniTableBody');
-            tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading records...</td></tr>`;
+            const cardsContainer = document.getElementById('alumniCardsContainer');
+            tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading directory...</td></tr>`;
+            cardsContainer.innerHTML = `<div class="col-span-full p-4 text-center text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading directory...</div>`;
 
             const { data, error } = await _supabase
                 .from('alumni')
@@ -226,7 +247,8 @@
                 .order('created_at', { ascending: false });
 
             if (error) {
-                alert('ഡാറ്റ ലഭ്യമാക്കാൻ സാധിച്ചില്ല: ' + error.message);
+                tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-rose-500">Error loading data.</td></tr>`;
+                cardsContainer.innerHTML = `<div class="col-span-full p-4 text-center text-rose-500">Error loading data.</div>`;
                 return;
             }
 
@@ -245,23 +267,37 @@
 
         function displayData(data) {
             const tbody = document.getElementById('alumniTableBody');
+            const cardsContainer = document.getElementById('alumniCardsContainer');
             tbody.innerHTML = '';
+            cardsContainer.innerHTML = '';
 
             if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400">വിവരങ്ങൾ ഒന്നും കണ്ടെത്തിയില്ല.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400">No records found.</td></tr>`;
+                cardsContainer.innerHTML = `<div class="col-span-full p-6 text-center text-slate-400">No records found.</div>`;
                 return;
             }
 
             data.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 transition";
-                tr.innerHTML = `
-                    <td class="p-3.5 font-medium text-slate-900">${row.membership_no || '-'}</td>
-                    <td class="p-3.5 font-medium text-slate-800">${row.full_name || '-'}</td>
-                    <td class="p-3.5 text-slate-600">${row.batch || '-'}</td>
-                    <td class="p-3.5 text-slate-600">${row.mobile_number || '-'}</td>
-                    <td class="p-3.5 text-slate-600">${row.district || '-'}</td>
-                    <td class="p-3.5 text-slate-600">${row.panchayat_municipality || row.place || '-'}</td>
+                const phone = cleanNumber(row.mobile_number);
+                const displayPhone = row.mobile_number || '-';
+
+                // Contact buttons HTML
+                let contactButtons = `<span class="text-xs text-slate-400">Not Available</span>`;
+                if (phone) {
+                    contactButtons = `
+                        <div class="inline-flex gap-2">
+                            <a href="tel:+${phone}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-xs font-semibold transition" title="Call">
+                                <i class="fa-solid fa-phone"></i> <span>Call</span>
+                            </a>
+                            <a href="https://wa.me/${phone}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-semibold transition" title="WhatsApp">
+                                <i class="fa-brands fa-whatsapp text-sm"></i> <span>WhatsApp</span>
+                            </a>
+                        </div>
+                    `;
+                }
+
+                // Admin actions HTML
+                const adminBtns = isAdminLoggedIn ? `
                     <td class="p-3.5 text-center">
                         <div class="inline-flex gap-1.5">
                             <button onclick='openEditModal(${JSON.stringify(row)})' class="p-2 text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg text-xs font-semibold" title="Edit">
@@ -272,8 +308,50 @@
                             </button>
                         </div>
                     </td>
+                ` : '';
+
+                // Table Row (Desktop)
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                tr.innerHTML = `
+                    <td class="p-3.5 font-medium text-slate-900">${row.membership_no || '-'}</td>
+                    <td class="p-3.5 font-semibold text-slate-800">${row.full_name || '-'}</td>
+                    <td class="p-3.5 text-slate-600"><span class="px-2 py-0.5 bg-slate-100 rounded text-xs font-medium">${row.batch || '-'}</span></td>
+                    <td class="p-3.5 text-slate-600">${row.district || '-'}</td>
+                    <td class="p-3.5 text-slate-600">${row.panchayat_municipality || row.place || '-'}</td>
+                    <td class="p-3.5 text-center">${contactButtons}</td>
+                    ${adminBtns}
                 `;
                 tbody.appendChild(tr);
+
+                // Mobile Card View
+                const card = document.createElement('div');
+                card.className = "bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-base">${row.full_name || '-'}</h4>
+                                <span class="text-xs text-slate-400">#${row.membership_no || 'N/A'}</span>
+                            </div>
+                            <span class="px-2.5 py-1 bg-blue-50 text-blue-800 font-semibold rounded-lg text-xs">${row.batch || '-'}</span>
+                        </div>
+                        <div class="text-xs text-slate-500 space-y-1 mb-4">
+                            <div><i class="fa-solid fa-location-dot w-4 text-slate-400"></i> ${row.panchayat_municipality || row.place || '-'}, ${row.district || '-'}</div>
+                            <div><i class="fa-solid fa-phone w-4 text-slate-400"></i> ${displayPhone}</div>
+                        </div>
+                    </div>
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                        <div>${contactButtons}</div>
+                        ${isAdminLoggedIn ? `
+                            <div class="flex gap-1">
+                                <button onclick='openEditModal(${JSON.stringify(row)})' class="p-2 text-blue-700 bg-blue-50 rounded-lg text-xs"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick='deleteAlumni("${row.id}")' class="p-2 text-rose-700 bg-rose-50 rounded-lg text-xs"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+                cardsContainer.appendChild(card);
             });
         }
 
@@ -285,7 +363,9 @@
             const filtered = allAlumniData.filter(row => {
                 const matchSearch = (row.full_name || '').toLowerCase().includes(searchVal) ||
                                     (row.membership_no || '').toLowerCase().includes(searchVal) ||
-                                    (row.mobile_number || '').toLowerCase().includes(searchVal);
+                                    (row.mobile_number || '').toLowerCase().includes(searchVal) ||
+                                    (row.place || '').toLowerCase().includes(searchVal) ||
+                                    (row.panchayat_municipality || '').toLowerCase().includes(searchVal);
                 const matchBatch = (row.batch || '').toLowerCase().includes(batchVal);
                 const matchDistrict = (row.district || '').toLowerCase().includes(districtVal);
                 return matchSearch && matchBatch && matchDistrict;
@@ -294,6 +374,45 @@
             displayData(filtered);
         }
 
+        // Admin Login Handling
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.remove('hidden');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.add('hidden');
+        }
+
+        document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('modalAdminEmail').value;
+            const password = document.getElementById('modalAdminPassword').value;
+            const btn = document.getElementById('loginModalBtn');
+
+            btn.disabled = true;
+            btn.innerText = "Verifying...";
+
+            const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+
+            btn.disabled = false;
+            btn.innerText = "Sign In";
+
+            if (error) {
+                alert('ലോഗിൻ പരാജയപ്പെട്ടു: ' + error.message);
+            } else {
+                closeLoginModal();
+                setAdminState(true);
+                displayData(allAlumniData); // refresh table to show admin buttons
+            }
+        });
+
+        async function logoutAdmin() {
+            await _supabase.auth.signOut();
+            setAdminState(false);
+            displayData(allAlumniData);
+        }
+
+        // Add / Edit Modal Controls
         function openAddModal() {
             document.getElementById('modalTitle').innerText = 'Add New Alumni';
             document.getElementById('formId').value = '';
@@ -317,11 +436,9 @@
             document.getElementById('alumniModal').classList.add('hidden');
         }
 
-        const alumniForm = document.getElementById('alumniForm');
-        alumniForm.addEventListener('submit', async (e) => {
+        document.getElementById('alumniForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('formId').value;
-            
             const payload = {
                 membership_no: document.getElementById('formMembershipNo').value,
                 batch: document.getElementById('formBatch').value,
@@ -373,17 +490,10 @@
             const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
             const link = document.createElement("a");
             link.setAttribute("href", encodeURI(csvContent));
-            link.setAttribute("download", `alumni_members_${new Date().toISOString().slice(0,10)}.csv`);
+            link.setAttribute("download", `fahm_alumni_${new Date().toISOString().slice(0,10)}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-        }
-
-        async function logout() {
-            await _supabase.auth.signOut();
-            document.getElementById('dashboardSection').classList.add('hidden');
-            document.getElementById('loginSection').classList.remove('hidden');
-            document.getElementById('adminPassword').value = '';
         }
     </script>
 </body>
