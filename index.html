@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumni Admin Dashboard</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased">
+
+    <!-- Login Section -->
+    <div id="loginSection" class="min-h-screen flex items-center justify-center px-4">
+        <div class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full border border-slate-100">
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-blue-100 text-blue-900 mb-3">
+                    <i class="fa-solid fa-user-shield text-2xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-blue-900">Admin Login</h2>
+                <p class="text-sm text-slate-500 mt-1">Manage alumni database securely</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold mb-1 text-slate-700">Admin Email</label>
+                    <input type="email" id="adminEmail" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm transition" placeholder="admin@example.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-1 text-slate-700">Password</label>
+                    <input type="password" id="adminPassword" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm transition" placeholder="Enter password">
+                </div>
+                <button type="submit" id="loginBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-800 text-white font-semibold rounded-xl shadow-lg transition">
+                    Login
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard Section -->
+    <div id="dashboardSection" class="hidden min-h-screen p-4 md:p-8 max-w-7xl mx-auto">
+        <header class="bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-800 text-white py-5 px-6 rounded-2xl shadow-md flex flex-wrap justify-between items-center gap-4 mb-6">
+            <div>
+                <h1 class="text-xl md:text-2xl font-bold">Alumni Admin Dashboard</h1>
+                <p id="userEmailBadge" class="text-xs text-blue-200 mt-0.5"></p>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="exportToCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition shadow flex items-center gap-2">
+                    <i class="fa-solid fa-file-excel"></i> Export CSV
+                </button>
+                <button onclick="openAddModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-xl transition shadow flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Add Alumni
+                </button>
+                <button onclick="logout()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold rounded-xl transition shadow flex items-center gap-2">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Overview Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-800 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div>
+                    <div class="text-xs text-slate-500 font-medium">Total Registered</div>
+                    <div id="statTotal" class="text-2xl font-bold text-slate-800">0</div>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-800 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <div class="text-xs text-slate-500 font-medium">Unique Batches</div>
+                    <div id="statBatches" class="text-2xl font-bold text-slate-800">0</div>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-location-dot"></i>
+                </div>
+                <div>
+                    <div class="text-xs text-slate-500 font-medium">Districts</div>
+                    <div id="statDistricts" class="text-2xl font-bold text-slate-800">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Controls -->
+        <div class="bg-white rounded-2xl shadow-sm p-4 mb-6 border border-slate-100 flex flex-col md:flex-row gap-4 justify-between items-center">
+            <div class="w-full md:w-1/2 relative">
+                <i class="fa-solid fa-search absolute left-4 top-3.5 text-slate-400"></i>
+                <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Search by name, membership no, mobile..." class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
+            </div>
+            <div class="w-full md:w-1/2 flex gap-3">
+                <input type="text" id="filterBatch" onkeyup="filterData()" placeholder="Filter Batch" class="w-1/2 px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
+                <input type="text" id="filterDistrict" onkeyup="filterData()" placeholder="Filter District" class="w-1/2 px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-600 text-xs uppercase tracking-wider border-b">
+                            <th class="p-3.5">Memb. No</th>
+                            <th class="p-3.5">Name</th>
+                            <th class="p-3.5">Batch</th>
+                            <th class="p-3.5">Mobile</th>
+                            <th class="p-3.5">District</th>
+                            <th class="p-3.5">Place</th>
+                            <th class="p-3.5 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="alumniTableBody" class="text-sm divide-y divide-slate-100"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Add/Edit -->
+    <div id="alumniModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modalTitle" class="text-lg font-bold text-blue-900">Alumni Details</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="alumniForm" class="space-y-3">
+                <input type="hidden" id="formId">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1 text-slate-600">Membership No</label>
+                        <input type="text" id="formMembershipNo" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1 text-slate-600">Batch</label>
+                        <input type="text" id="formBatch" required class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-slate-600">Full Name</label>
+                    <input type="text" id="formFullName" required class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-slate-600">Mobile Number</label>
+                    <input type="text" id="formMobile" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1 text-slate-600">District</label>
+                        <input type="text" id="formDistrict" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1 text-slate-600">Place</label>
+                        <input type="text" id="formPlace" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 pt-3">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-semibold transition">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-xl text-sm font-semibold transition">Save Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://fpirwwpjlpkhrydpovrd.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwaXJ3d3BqbHBraHJ5ZHBvdnJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzMjcxNjgsImV4cCI6MjEwODkwMzE2OH0.dAW_xrzwbdZ4sxugVXdGqTYKzvym1sR4xav373LY8QY';
+
+        const { createClient } = supabase;
+        const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let allAlumniData = [];
+
+        // Check active session using Supabase Auth
+        window.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await _supabase.auth.getSession();
+            if (session) {
+                showDashboard(session.user.email);
+            }
+        });
+
+        // Login Handler
+        const loginForm = document.getElementById('loginForm');
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+            const btn = document.getElementById('loginBtn');
+
+            btn.disabled = true;
+            btn.innerText = "Verifying...";
+
+            const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+
+            btn.disabled = false;
+            btn.innerText = "Login";
+
+            if (error) {
+                alert('ലോഗിൻ പരാജയപ്പെട്ടു: ' + error.message);
+            } else {
+                showDashboard(data.user.email);
+            }
+        });
+
+        function showDashboard(email) {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.remove('hidden');
+            document.getElementById('userEmailBadge').innerText = 'Logged in as: ' + email;
+            loadAlumniData();
+        }
+
+        async function loadAlumniData() {
+            const tbody = document.getElementById('alumniTableBody');
+            tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading records...</td></tr>`;
+
+            const { data, error } = await _supabase
+                .from('alumni')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                alert('ഡാറ്റ ലഭ്യമാക്കാൻ സാധിച്ചില്ല: ' + error.message);
+                return;
+            }
+
+            allAlumniData = data || [];
+            updateStats(allAlumniData);
+            displayData(allAlumniData);
+        }
+
+        function updateStats(data) {
+            document.getElementById('statTotal').innerText = data.length;
+            const batches = new Set(data.map(d => d.batch).filter(Boolean));
+            const districts = new Set(data.map(d => d.district).filter(Boolean));
+            document.getElementById('statBatches').innerText = batches.size;
+            document.getElementById('statDistricts').innerText = districts.size;
+        }
+
+        function displayData(data) {
+            const tbody = document.getElementById('alumniTableBody');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400">വിവരങ്ങൾ ഒന്നും കണ്ടെത്തിയില്ല.</td></tr>`;
+                return;
+            }
+
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                tr.innerHTML = `
+                    <td class="p-3.5 font-medium text-slate-900">${row.membership_no || '-'}</td>
+                    <td class="p-3.5 font-medium text-slate-800">${row.full_name || '-'}</td>
+                    <td class="p-3.5 text-slate-600">${row.batch || '-'}</td>
+                    <td class="p-3.5 text-slate-600">${row.mobile_number || '-'}</td>
+                    <td class="p-3.5 text-slate-600">${row.district || '-'}</td>
+                    <td class="p-3.5 text-slate-600">${row.panchayat_municipality || row.place || '-'}</td>
+                    <td class="p-3.5 text-center">
+                        <div class="inline-flex gap-1.5">
+                            <button onclick='openEditModal(${JSON.stringify(row)})' class="p-2 text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg text-xs font-semibold" title="Edit">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button onclick='deleteAlumni("${row.id}")' class="p-2 text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg text-xs font-semibold" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterData() {
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const batchVal = document.getElementById('filterBatch').value.toLowerCase();
+            const districtVal = document.getElementById('filterDistrict').value.toLowerCase();
+
+            const filtered = allAlumniData.filter(row => {
+                const matchSearch = (row.full_name || '').toLowerCase().includes(searchVal) ||
+                                    (row.membership_no || '').toLowerCase().includes(searchVal) ||
+                                    (row.mobile_number || '').toLowerCase().includes(searchVal);
+                const matchBatch = (row.batch || '').toLowerCase().includes(batchVal);
+                const matchDistrict = (row.district || '').toLowerCase().includes(districtVal);
+                return matchSearch && matchBatch && matchDistrict;
+            });
+
+            displayData(filtered);
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').innerText = 'Add New Alumni';
+            document.getElementById('formId').value = '';
+            document.getElementById('alumniForm').reset();
+            document.getElementById('alumniModal').classList.remove('hidden');
+        }
+
+        function openEditModal(row) {
+            document.getElementById('modalTitle').innerText = 'Edit Alumni Details';
+            document.getElementById('formId').value = row.id;
+            document.getElementById('formMembershipNo').value = row.membership_no || '';
+            document.getElementById('formBatch').value = row.batch || '';
+            document.getElementById('formFullName').value = row.full_name || '';
+            document.getElementById('formMobile').value = row.mobile_number || '';
+            document.getElementById('formDistrict').value = row.district || '';
+            document.getElementById('formPlace').value = row.panchayat_municipality || row.place || '';
+            document.getElementById('alumniModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('alumniModal').classList.add('hidden');
+        }
+
+        const alumniForm = document.getElementById('alumniForm');
+        alumniForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('formId').value;
+            
+            const payload = {
+                membership_no: document.getElementById('formMembershipNo').value,
+                batch: document.getElementById('formBatch').value,
+                full_name: document.getElementById('formFullName').value,
+                mobile_number: document.getElementById('formMobile').value,
+                district: document.getElementById('formDistrict').value,
+                place: document.getElementById('formPlace').value
+            };
+
+            let response;
+            if (id) {
+                response = await _supabase.from('alumni').update(payload).eq('id', id);
+            } else {
+                response = await _supabase.from('alumni').insert([payload]);
+            }
+
+            if (response.error) {
+                alert('സേവ് ചെയ്യാൻ സാധിച്ചില്ല: ' + response.error.message);
+            } else {
+                closeModal();
+                loadAlumniData();
+            }
+        });
+
+        async function deleteAlumni(id) {
+            if (!confirm('ഈ റെക്കോർഡ് നീക്കം ചെയ്യാൻ ആഗ്രഹിക്കുന്നുണ്ടോ?')) return;
+            const { error } = await _supabase.from('alumni').delete().eq('id', id);
+            if (error) {
+                alert('ഡിലീറ്റ് ചെയ്യാൻ സാധിച്ചില്ല: ' + error.message);
+            } else {
+                loadAlumniData();
+            }
+        }
+
+        function exportToCSV() {
+            if (allAlumniData.length === 0) {
+                alert('ഡൗൺലോഡ് ചെയ്യാൻ ഡാറ്റ ലഭ്യമല്ല.');
+                return;
+            }
+            const headers = ["Membership No", "Full Name", "Batch", "Mobile Number", "District", "Place"];
+            const rows = allAlumniData.map(row => [
+                `"${row.membership_no || ''}"`,
+                `"${row.full_name || ''}"`,
+                `"${row.batch || ''}"`,
+                `"${row.mobile_number || ''}"`,
+                `"${row.district || ''}"`,
+                `"${row.panchayat_municipality || row.place || ''}"`
+            ]);
+            const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+            const link = document.createElement("a");
+            link.setAttribute("href", encodeURI(csvContent));
+            link.setAttribute("download", `alumni_members_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        async function logout() {
+            await _supabase.auth.signOut();
+            document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('adminPassword').value = '';
+        }
+    </script>
+</body>
+</html>
