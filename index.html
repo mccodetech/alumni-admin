@@ -11,115 +11,195 @@
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen">
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen flex flex-col">
 
     <!-- Top Navigation Bar -->
-    <nav class="bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-800 text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap justify-between items-center gap-4">
+    <nav class="bg-gradient-to-r from-blue-950 via-indigo-900 to-blue-900 text-white shadow-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-xl text-blue-200">
                     <i class="fa-solid fa-graduation-cap"></i>
                 </div>
                 <div>
                     <h1 class="text-xl font-bold tracking-tight">FAHM ALUMNI</h1>
-                    <p class="text-xs text-blue-200">Public Directory & Connect</p>
+                    <p class="text-xs text-blue-200">Official Community Portal</p>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2" id="navActions">
-                <!-- Shown when NOT logged in -->
-                <button id="showLoginModalBtn" onclick="openLoginModal()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm font-semibold rounded-xl transition border border-white/20 flex items-center gap-2">
-                    <i class="fa-solid fa-lock text-xs"></i> Admin Login
+            <!-- Tab Switcher Navigation -->
+            <div class="flex items-center gap-1 sm:gap-2 bg-black/20 p-1 rounded-xl text-xs sm:text-sm font-medium">
+                <button onclick="switchTab('dashboard')" id="tabBtn-dashboard" class="tab-btn px-3 py-1.5 rounded-lg bg-white text-blue-950 font-bold shadow-sm transition">
+                    <i class="fa-solid fa-chart-pie mr-1 sm:mr-1.5"></i> Home
+                </button>
+                <button onclick="switchTab('directory')" id="tabBtn-directory" class="tab-btn px-3 py-1.5 rounded-lg text-blue-100 hover:text-white transition">
+                    <i class="fa-solid fa-users mr-1 sm:mr-1.5"></i> Directory
+                </button>
+                <button onclick="switchTab('profile')" id="tabBtn-profile" class="tab-btn px-3 py-1.5 rounded-lg text-blue-100 hover:text-white transition">
+                    <i class="fa-solid fa-id-card mr-1 sm:mr-1.5"></i> Find Profile
+                </button>
+                <button onclick="switchTab('forms')" id="tabBtn-forms" class="tab-btn px-3 py-1.5 rounded-lg text-blue-100 hover:text-white transition">
+                    <i class="fa-solid fa-link mr-1 sm:mr-1.5"></i> Forms & Events
+                </button>
+            </div>
+
+            <!-- Login / Admin Buttons -->
+            <div class="flex items-center gap-2">
+                <button id="showLoginModalBtn" onclick="openLoginModal()" class="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-semibold rounded-xl transition border border-white/20 flex items-center gap-1.5">
+                    <i class="fa-solid fa-lock text-xs"></i> Admin
                 </button>
 
-                <!-- Shown when logged in as ADMIN (hidden by default) -->
-                <div id="adminActions" class="hidden flex flex-wrap items-center gap-2">
-                    <span id="adminBadge" class="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 px-3 py-1.5 rounded-lg hidden sm:inline-block">Admin Mode</span>
-                    <button onclick="exportToCSV()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition shadow flex items-center gap-1.5">
-                        <i class="fa-solid fa-file-excel"></i> Export CSV
+                <div id="adminActions" class="hidden flex items-center gap-2">
+                    <button onclick="openAddModal()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-xl transition shadow flex items-center gap-1">
+                        <i class="fa-solid fa-plus"></i> Add
                     </button>
-                    <button onclick="openAddModal()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-xl transition shadow flex items-center gap-1.5">
-                        <i class="fa-solid fa-plus"></i> Add Alumni
+                    <button onclick="exportToCSV()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition shadow flex items-center gap-1">
+                        <i class="fa-solid fa-file-excel"></i> Export
                     </button>
-                    <button onclick="logoutAdmin()" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl transition shadow flex items-center gap-1.5">
-                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    <button onclick="logoutAdmin()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl transition shadow flex items-center gap-1">
+                        <i class="fa-solid fa-right-from-bracket"></i>
                     </button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto p-4 sm:p-6 md:p-8">
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto p-4 sm:p-6 md:p-8 flex-1 w-full">
 
-        <!-- Stats Overview Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-800 flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-users"></i>
+        <!-- 1. DASHBOARD TAB -->
+        <section id="tab-dashboard" class="tab-content space-y-6">
+            <!-- Welcome Banner -->
+            <div class="bg-gradient-to-r from-blue-900 to-indigo-800 rounded-3xl p-6 sm:p-8 text-white shadow-lg relative overflow-hidden">
+                <div class="relative z-10 max-w-2xl">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold mb-2">Welcome to FAHM Alumni Portal</h2>
+                    <p class="text-blue-100 text-sm leading-relaxed mb-6">Connect with fellow graduates, explore member directory, look up profiles, and stay updated with official events and registration links.</p>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="switchTab('directory')" class="px-5 py-2.5 bg-white text-blue-900 hover:bg-blue-50 font-bold rounded-xl text-sm shadow transition flex items-center gap-2">
+                            <i class="fa-solid fa-address-book"></i> Browse Directory
+                        </button>
+                        <button onclick="switchTab('profile')" class="px-5 py-2.5 bg-blue-800 hover:bg-blue-700 text-white font-semibold rounded-xl text-sm transition border border-blue-400/30 flex items-center gap-2">
+                            <i class="fa-solid fa-magnifying-glass"></i> Search My Details
+                        </button>
+                    </div>
                 </div>
+                <i class="fa-solid fa-graduation-cap absolute -right-6 -bottom-8 text-9xl text-white/10 pointer-events-none"></i>
+            </div>
+
+            <!-- Stats Overview Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-800 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-500 font-medium">Total Registered Alumni</div>
+                        <div id="statTotal" class="text-2xl font-bold text-slate-800">0</div>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-800 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-500 font-medium">Active Batches</div>
+                        <div id="statBatches" class="text-2xl font-bold text-slate-800">0</div>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-500 font-medium">Districts Represented</div>
+                        <div id="statDistricts" class="text-2xl font-bold text-slate-800">0</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. DIRECTORY TAB -->
+        <section id="tab-directory" class="tab-content hidden space-y-6">
+            <!-- Search & Filter Controls -->
+            <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-100 flex flex-col md:flex-row gap-3 justify-between items-center">
+                <div class="w-full md:w-1/2 relative">
+                    <i class="fa-solid fa-search absolute left-4 top-3.5 text-slate-400"></i>
+                    <input type="text" id="searchInput" onkeyup="filterDirectory()" placeholder="Search by name, place, membership no, job..." class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
+                </div>
+                <div class="w-full md:w-1/2 flex gap-3">
+                    <input type="text" id="filterBatch" onkeyup="filterDirectory()" placeholder="Filter Batch (eg: D2)" class="w-1/2 px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
+                    <input type="text" id="filterPlace" onkeyup="filterDirectory()" placeholder="Filter Place" class="w-1/2 px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
+                </div>
+            </div>
+
+            <!-- Directory Grid Cards -->
+            <div id="directoryContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </section>
+
+        <!-- 3. FIND PROFILE TAB -->
+        <section id="tab-profile" class="tab-content hidden max-w-2xl mx-auto space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-100 text-center">
+                <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-900 flex items-center justify-center text-2xl mx-auto mb-3">
+                    <i class="fa-solid fa-address-card"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800">Find My Alumni Profile</h3>
+                <p class="text-xs text-slate-500 mt-1 mb-6">Enter your Mobile Number or FAHM Membership No to look up your complete records.</p>
+                
+                <div class="flex gap-2 max-w-md mx-auto">
+                    <input type="text" id="profileSearchInput" placeholder="Mobile / Membership No" class="flex-1 px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
+                    <button onclick="searchMyProfile()" class="px-5 py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-semibold rounded-xl text-sm transition">
+                        Search
+                    </button>
+                </div>
+            </div>
+
+            <!-- Single Profile Result Display -->
+            <div id="profileResultCard" class="hidden"></div>
+        </section>
+
+        <!-- 4. FORMS & EVENTS TAB -->
+        <section id="tab-forms" class="tab-content hidden space-y-6">
+            <div class="flex justify-between items-center">
                 <div>
-                    <div class="text-xs text-slate-500 font-medium">Total Registered</div>
-                    <div id="statTotal" class="text-2xl font-bold text-slate-800">0</div>
+                    <h3 class="text-lg font-bold text-slate-800">Forms & Event Registrations</h3>
+                    <p class="text-xs text-slate-500">Access ongoing programs, event registrations, and community submission links</p>
                 </div>
+                <button id="addFormLinkBtn" onclick="openAddLinkForm()" class="hidden px-4 py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-xl text-xs font-semibold shadow transition items-center gap-1.5">
+                    <i class="fa-solid fa-plus"></i> Add Event Link
+                </button>
             </div>
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-800 flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-graduation-cap"></i>
-                </div>
-                <div>
-                    <div class="text-xs text-slate-500 font-medium">Batches</div>
-                    <div id="statBatches" class="text-2xl font-bold text-slate-800">0</div>
-                </div>
-            </div>
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-location-dot"></i>
-                </div>
-                <div>
-                    <div class="text-xs text-slate-500 font-medium">Districts</div>
-                    <div id="statDistricts" class="text-2xl font-bold text-slate-800">0</div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Search Controls -->
-        <div class="bg-white rounded-2xl shadow-sm p-4 mb-6 border border-slate-100 flex flex-col md:flex-row gap-3 justify-between items-center">
-            <div class="w-full md:w-1/2 relative">
-                <i class="fa-solid fa-search absolute left-4 top-3.5 text-slate-400"></i>
-                <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Search by name, mobile, place, membership no..." class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
-            </div>
-            <div class="w-full md:w-1/2 flex gap-3">
-                <input type="text" id="filterBatch" onkeyup="filterData()" placeholder="Filter Batch (eg: D2)" class="w-1/2 px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
-                <input type="text" id="filterDistrict" onkeyup="filterData()" placeholder="Filter District" class="w-1/2 px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
-            </div>
-        </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="formsListContainer">
+                <!-- Sample Form Card 1 -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-lg text-[11px] uppercase tracking-wider">Active</span>
+                        <h4 class="text-base font-bold text-slate-800 mt-2.5">Annual Alumni Meet Registration</h4>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">Register your attendance and family details for the upcoming annual meet.</p>
+                    </div>
+                    <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <span class="text-xs text-slate-400"><i class="fa-regular fa-calendar mr-1"></i> Upcoming</span>
+                        <a href="register.html" class="px-3.5 py-1.5 bg-blue-900 hover:bg-blue-800 text-white rounded-lg text-xs font-semibold transition">Open Form</a>
+                    </div>
+                </div>
 
-        <!-- Directory Table View (Desktop & Tablet) -->
-        <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-slate-50 text-slate-600 text-xs uppercase tracking-wider border-b">
-                            <th class="p-3.5">Memb. No</th>
-                            <th class="p-3.5">Name</th>
-                            <th class="p-3.5">Batch</th>
-                            <th class="p-3.5">District</th>
-                            <th class="p-3.5">Place</th>
-                            <th class="p-3.5 text-center">Contact / Connect</th>
-                            <th id="adminActionHeader" class="p-3.5 text-center hidden">Admin Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="alumniTableBody" class="text-sm divide-y divide-slate-100"></tbody>
-                </table>
+                <!-- Sample Form Card 2 -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <span class="px-2.5 py-1 bg-blue-50 text-blue-700 font-semibold rounded-lg text-[11px] uppercase tracking-wider">Registration</span>
+                        <h4 class="text-base font-bold text-slate-800 mt-2.5">New Member Registration</h4>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">Submit personal and academic details to register in FAHM database.</p>
+                    </div>
+                    <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <span class="text-xs text-slate-400"><i class="fa-solid fa-link mr-1"></i> Public Form</span>
+                        <a href="register.html" class="px-3.5 py-1.5 bg-blue-900 hover:bg-blue-800 text-white rounded-lg text-xs font-semibold transition">Register Now</a>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <!-- Mobile Card View -->
-        <div id="alumniCardsContainer" class="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+        </section>
 
     </main>
 
-    <!-- Admin Login Modal -->
+    <!-- Modal for Admin Login -->
     <div id="loginModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 max-w-sm w-full border border-slate-100 relative">
             <button onclick="closeLoginModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600">
@@ -130,7 +210,7 @@
                     <i class="fa-solid fa-user-shield text-xl"></i>
                 </div>
                 <h3 class="text-lg font-bold text-blue-900">Admin Login</h3>
-                <p class="text-xs text-slate-500">Enter admin credentials to manage records</p>
+                <p class="text-xs text-slate-500">Sign in to edit, add, or manage alumni</p>
             </div>
             <form id="adminLoginForm" class="space-y-4">
                 <div>
@@ -149,43 +229,75 @@
     </div>
 
     <!-- Modal for Add / Edit Alumni (Admin Only) -->
-    <div id="alumniModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl">
+    <div id="alumniModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+        <div class="bg-white rounded-2xl p-6 max-w-xl w-full shadow-2xl my-8">
             <div class="flex justify-between items-center mb-4">
                 <h3 id="modalTitle" class="text-lg font-bold text-blue-900">Alumni Details</h3>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <form id="alumniForm" class="space-y-3">
                 <input type="hidden" id="formId">
-                <div class="grid grid-cols-2 gap-3">
+                
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-slate-600">Full Name *</label>
+                    <input type="text" id="formFullName" required class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold mb-1 text-slate-600">Membership No</label>
-                        <input type="text" id="formMembershipNo" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                        <label class="block text-xs font-semibold mb-1 text-slate-600">Place</label>
+                        <input type="text" id="formPlace" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold mb-1 text-slate-600">Batch</label>
+                        <label class="block text-xs font-semibold mb-1 text-slate-600">Batch *</label>
                         <input type="text" id="formBatch" required class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
                     </div>
                 </div>
+
                 <div>
-                    <label class="block text-xs font-semibold mb-1 text-slate-600">Full Name</label>
-                    <input type="text" id="formFullName" required class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                    <label class="block text-xs font-semibold mb-1 text-slate-600">Address</label>
+                    <textarea id="formAddress" rows="2" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none"></textarea>
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold mb-1 text-slate-600">Mobile Number (eg: 9847000000)</label>
-                    <input type="text" id="formMobile" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold mb-1 text-slate-600">District</label>
-                        <input type="text" id="formDistrict" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                        <label class="block text-xs font-semibold mb-1 text-slate-600">Mobile Number *</label>
+                        <input type="text" id="formMobile" required class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold mb-1 text-slate-600">Place / Panchayat</label>
-                        <input type="text" id="formPlace" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                        <label class="block text-xs font-semibold mb-1 text-slate-600">WhatsApp Number</label>
+                        <input type="text" id="formWhatsApp" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
                     </div>
                 </div>
-                <div class="flex justify-end gap-2 pt-3">
+
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-slate-600">Gmail / Email</label>
+                    <input type="email" id="formEmail" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1 text-slate-600">Religious Degree</label>
+                        <input type="text" id="formReligiousDegree" placeholder="eg. Faizy / Hudawi" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1 text-slate-600">General Education</label>
+                        <input type="text" id="formGeneralEdu" placeholder="eg. BA, B.Com, MA" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1 text-slate-600">Current Job</label>
+                        <input type="text" id="formJob" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1 text-slate-600">FAHM Membership No</label>
+                        <input type="text" id="formMembershipNo" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-4 border-t">
                     <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-semibold transition">Cancel</button>
                     <button type="submit" class="px-5 py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-xl text-sm font-semibold transition">Save Record</button>
                 </div>
@@ -203,7 +315,6 @@
         let allAlumniData = [];
         let isAdminLoggedIn = false;
 
-        // Clean phone number for WhatsApp/Call
         function cleanNumber(num) {
             if (!num) return '';
             let cleaned = num.toString().replace(/[^0-9]/g, '');
@@ -212,137 +323,113 @@
         }
 
         window.addEventListener('DOMContentLoaded', async () => {
-            // Check if admin is already logged in
             const { data: { session } } = await _supabase.auth.getSession();
             setAdminState(!!session);
             loadAlumniData();
         });
 
+        // Tab Switching Logic
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn px-3 py-1.5 rounded-lg text-blue-100 hover:text-white transition";
+            });
+
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tabBtn-${tabName}`);
+            activeBtn.className = "tab-btn px-3 py-1.5 rounded-lg bg-white text-blue-950 font-bold shadow-sm transition";
+        }
+
         function setAdminState(isAdmin) {
             isAdminLoggedIn = isAdmin;
             const loginBtn = document.getElementById('showLoginModalBtn');
             const adminActions = document.getElementById('adminActions');
-            const adminHeader = document.getElementById('adminActionHeader');
+            const addFormLinkBtn = document.getElementById('addFormLinkBtn');
 
             if (isAdmin) {
                 loginBtn.classList.add('hidden');
                 adminActions.classList.remove('hidden');
-                adminHeader.classList.remove('hidden');
+                addFormLinkBtn.classList.remove('hidden');
+                addFormLinkBtn.classList.add('inline-flex');
             } else {
                 loginBtn.classList.remove('hidden');
                 adminActions.classList.add('hidden');
-                adminHeader.classList.add('hidden');
+                addFormLinkBtn.classList.add('hidden');
+                addFormLinkBtn.classList.remove('inline-flex');
             }
         }
 
         async function loadAlumniData() {
-            const tbody = document.getElementById('alumniTableBody');
-            const cardsContainer = document.getElementById('alumniCardsContainer');
-            tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading directory...</td></tr>`;
-            cardsContainer.innerHTML = `<div class="col-span-full p-4 text-center text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading directory...</div>`;
-
             const { data, error } = await _supabase
                 .from('alumni')
                 .select('*')
                 .order('created_at', { ascending: false });
 
             if (error) {
-                tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-rose-500">Error loading data.</td></tr>`;
-                cardsContainer.innerHTML = `<div class="col-span-full p-4 text-center text-rose-500">Error loading data.</div>`;
+                console.error(error);
                 return;
             }
 
             allAlumniData = data || [];
             updateStats(allAlumniData);
-            displayData(allAlumniData);
+            displayDirectory(allAlumniData);
         }
 
         function updateStats(data) {
             document.getElementById('statTotal').innerText = data.length;
             const batches = new Set(data.map(d => d.batch).filter(Boolean));
-            const districts = new Set(data.map(d => d.district).filter(Boolean));
+            const districts = new Set(data.map(d => d.district || d.place).filter(Boolean));
             document.getElementById('statBatches').innerText = batches.size;
             document.getElementById('statDistricts').innerText = districts.size;
         }
 
-        function displayData(data) {
-            const tbody = document.getElementById('alumniTableBody');
-            const cardsContainer = document.getElementById('alumniCardsContainer');
-            tbody.innerHTML = '';
-            cardsContainer.innerHTML = '';
+        // Render Cards in Directory
+        function displayDirectory(data) {
+            const container = document.getElementById('directoryContainer');
+            container.innerHTML = '';
 
             if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400">No records found.</td></tr>`;
-                cardsContainer.innerHTML = `<div class="col-span-full p-6 text-center text-slate-400">No records found.</div>`;
+                container.innerHTML = `<div class="col-span-full p-8 text-center text-slate-400">No records found.</div>`;
                 return;
             }
 
             data.forEach(row => {
-                const phone = cleanNumber(row.mobile_number);
-                const displayPhone = row.mobile_number || '-';
+                const callPhone = cleanNumber(row.mobile_number);
+                const waPhone = cleanNumber(row.whatsapp_number || row.mobile_number);
 
-                // Contact buttons HTML
-                let contactButtons = `<span class="text-xs text-slate-400">Not Available</span>`;
-                if (phone) {
-                    contactButtons = `
-                        <div class="inline-flex gap-2">
-                            <a href="tel:+${phone}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-xs font-semibold transition" title="Call">
-                                <i class="fa-solid fa-phone"></i> <span>Call</span>
-                            </a>
-                            <a href="https://wa.me/${phone}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-semibold transition" title="WhatsApp">
-                                <i class="fa-brands fa-whatsapp text-sm"></i> <span>WhatsApp</span>
-                            </a>
-                        </div>
-                    `;
-                }
-
-                // Admin actions HTML
-                const adminBtns = isAdminLoggedIn ? `
-                    <td class="p-3.5 text-center">
-                        <div class="inline-flex gap-1.5">
-                            <button onclick='openEditModal(${JSON.stringify(row)})' class="p-2 text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg text-xs font-semibold" title="Edit">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </button>
-                            <button onclick='deleteAlumni("${row.id}")' class="p-2 text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg text-xs font-semibold" title="Delete">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-                    </td>
-                ` : '';
-
-                // Table Row (Desktop)
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 transition";
-                tr.innerHTML = `
-                    <td class="p-3.5 font-medium text-slate-900">${row.membership_no || '-'}</td>
-                    <td class="p-3.5 font-semibold text-slate-800">${row.full_name || '-'}</td>
-                    <td class="p-3.5 text-slate-600"><span class="px-2 py-0.5 bg-slate-100 rounded text-xs font-medium">${row.batch || '-'}</span></td>
-                    <td class="p-3.5 text-slate-600">${row.district || '-'}</td>
-                    <td class="p-3.5 text-slate-600">${row.panchayat_municipality || row.place || '-'}</td>
-                    <td class="p-3.5 text-center">${contactButtons}</td>
-                    ${adminBtns}
-                `;
-                tbody.appendChild(tr);
-
-                // Mobile Card View
                 const card = document.createElement('div');
-                card.className = "bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col justify-between";
+                card.className = "bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between hover:shadow-md transition";
                 card.innerHTML = `
                     <div>
                         <div class="flex justify-between items-start mb-2">
                             <div>
-                                <h4 class="font-bold text-slate-800 text-base">${row.full_name || '-'}</h4>
-                                <span class="text-xs text-slate-400">#${row.membership_no || 'N/A'}</span>
+                                <h4 class="font-bold text-slate-800 text-base leading-tight">${row.full_name || '-'}</h4>
+                                <span class="text-[11px] text-blue-900 font-semibold bg-blue-50 px-2 py-0.5 rounded-md mt-1 inline-block">Memb. No: ${row.membership_no || 'N/A'}</span>
                             </div>
-                            <span class="px-2.5 py-1 bg-blue-50 text-blue-800 font-semibold rounded-lg text-xs">${row.batch || '-'}</span>
+                            <span class="px-2.5 py-1 bg-slate-100 text-slate-700 font-semibold rounded-lg text-xs">${row.batch || '-'}</span>
                         </div>
-                        <div class="text-xs text-slate-500 space-y-1 mb-4">
-                            <div><i class="fa-solid fa-location-dot w-4 text-slate-400"></i> ${row.panchayat_municipality || row.place || '-'}, ${row.district || '-'}</div>
-                            <div><i class="fa-solid fa-phone w-4 text-slate-400"></i> ${displayPhone}</div>
+
+                        <div class="space-y-1.5 text-xs text-slate-600 my-3">
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-location-dot w-3.5 text-slate-400"></i> <span>${row.place || row.panchayat_municipality || '-'}</span></div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-briefcase w-3.5 text-slate-400"></i> <span>${row.current_job || '-'}</span></div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-graduation-cap w-3.5 text-slate-400"></i> <span>${row.religious_degree || '-'} ${row.general_education ? '(' + row.general_education + ')' : ''}</span></div>
                         </div>
                     </div>
-                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                        <div>${contactButtons}</div>
+
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 mt-2">
+                        <div class="flex gap-2">
+                            ${callPhone ? `
+                                <a href="tel:+${callPhone}" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-800 rounded-lg text-xs font-semibold transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-phone"></i> Call
+                                </a>
+                            ` : ''}
+                            ${waPhone ? `
+                                <a href="https://wa.me/${waPhone}" target="_blank" class="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-lg text-xs font-semibold transition flex items-center gap-1.5">
+                                    <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
+                                </a>
+                            ` : ''}
+                        </div>
+
                         ${isAdminLoggedIn ? `
                             <div class="flex gap-1">
                                 <button onclick='openEditModal(${JSON.stringify(row)})' class="p-2 text-blue-700 bg-blue-50 rounded-lg text-xs"><i class="fa-solid fa-pen-to-square"></i></button>
@@ -351,37 +438,89 @@
                         ` : ''}
                     </div>
                 `;
-                cardsContainer.appendChild(card);
+                container.appendChild(card);
             });
         }
 
-        function filterData() {
+        function filterDirectory() {
             const searchVal = document.getElementById('searchInput').value.toLowerCase();
             const batchVal = document.getElementById('filterBatch').value.toLowerCase();
-            const districtVal = document.getElementById('filterDistrict').value.toLowerCase();
+            const placeVal = document.getElementById('filterPlace').value.toLowerCase();
 
             const filtered = allAlumniData.filter(row => {
                 const matchSearch = (row.full_name || '').toLowerCase().includes(searchVal) ||
                                     (row.membership_no || '').toLowerCase().includes(searchVal) ||
-                                    (row.mobile_number || '').toLowerCase().includes(searchVal) ||
-                                    (row.place || '').toLowerCase().includes(searchVal) ||
-                                    (row.panchayat_municipality || '').toLowerCase().includes(searchVal);
+                                    (row.current_job || '').toLowerCase().includes(searchVal) ||
+                                    (row.mobile_number || '').toLowerCase().includes(searchVal);
                 const matchBatch = (row.batch || '').toLowerCase().includes(batchVal);
-                const matchDistrict = (row.district || '').toLowerCase().includes(districtVal);
-                return matchSearch && matchBatch && matchDistrict;
+                const matchPlace = (row.place || row.district || '').toLowerCase().includes(placeVal);
+                return matchSearch && matchBatch && matchPlace;
             });
 
-            displayData(filtered);
+            displayDirectory(filtered);
         }
 
-        // Admin Login Handling
-        function openLoginModal() {
-            document.getElementById('loginModal').classList.remove('hidden');
+        // Single Profile Look up
+        function searchMyProfile() {
+            const query = document.getElementById('profileSearchInput').value.trim().toLowerCase();
+            const resultCard = document.getElementById('profileResultCard');
+
+            if (!query) {
+                alert('Please enter a mobile number or membership number.');
+                return;
+            }
+
+            const match = allAlumniData.find(r => 
+                (r.membership_no && r.membership_no.toLowerCase() === query) ||
+                (r.mobile_number && r.mobile_number.includes(query)) ||
+                (r.whatsapp_number && r.whatsapp_number.includes(query))
+            );
+
+            resultCard.classList.remove('hidden');
+
+            if (!match) {
+                resultCard.innerHTML = `
+                    <div class="bg-rose-50 border border-rose-200 text-rose-800 p-5 rounded-2xl text-center text-sm">
+                        No profile found matching "${query}". Please verify your details.
+                    </div>
+                `;
+                return;
+            }
+
+            const callPhone = cleanNumber(match.mobile_number);
+            const waPhone = cleanNumber(match.whatsapp_number || match.mobile_number);
+
+            resultCard.innerHTML = `
+                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-100">
+                    <div class="flex justify-between items-start pb-4 border-b">
+                        <div>
+                            <span class="text-xs font-bold text-blue-900 bg-blue-50 px-2.5 py-1 rounded-lg">Memb. No: ${match.membership_no || 'N/A'}</span>
+                            <h3 class="text-xl font-bold text-slate-800 mt-2">${match.full_name || '-'}</h3>
+                            <p class="text-xs text-slate-500">${match.place || '-'} • Batch ${match.batch || '-'}</p>
+                        </div>
+                        <div class="flex gap-2">
+                            ${callPhone ? `<a href="tel:+${callPhone}" class="p-2.5 bg-blue-50 text-blue-700 rounded-xl text-sm"><i class="fa-solid fa-phone"></i></a>` : ''}
+                            ${waPhone ? `<a href="https://wa.me/${waPhone}" target="_blank" class="p-2.5 bg-emerald-50 text-emerald-700 rounded-xl text-sm"><i class="fa-brands fa-whatsapp text-lg"></i></a>` : ''}
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-slate-700 mt-4">
+                        <div><strong class="text-slate-400 block mb-0.5">Place</strong> ${match.place || '-'}</div>
+                        <div><strong class="text-slate-400 block mb-0.5">Address</strong> ${match.address || '-'}</div>
+                        <div><strong class="text-slate-400 block mb-0.5">Mobile Number</strong> ${match.mobile_number || '-'}</div>
+                        <div><strong class="text-slate-400 block mb-0.5">WhatsApp Number</strong> ${match.whatsapp_number || '-'}</div>
+                        <div><strong class="text-slate-400 block mb-0.5">Gmail / Email</strong> ${match.email || '-'}</div>
+                        <div><strong class="text-slate-400 block mb-0.5">Religious Degree</strong> ${match.religious_degree || '-'}</div>
+                        <div><strong class="text-slate-400 block mb-0.5">General Education</strong> ${match.general_education || '-'}</div>
+                        <div><strong class="text-slate-400 block mb-0.5">Current Job</strong> ${match.current_job || '-'}</div>
+                    </div>
+                </div>
+            `;
         }
 
-        function closeLoginModal() {
-            document.getElementById('loginModal').classList.add('hidden');
-        }
+        // Admin Auth
+        function openLoginModal() { document.getElementById('loginModal').classList.remove('hidden'); }
+        function closeLoginModal() { document.getElementById('loginModal').classList.add('hidden'); }
 
         document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -393,59 +532,66 @@
             btn.innerText = "Verifying...";
 
             const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
-
             btn.disabled = false;
             btn.innerText = "Sign In";
 
             if (error) {
-                alert('ലോഗിൻ പരാജയപ്പെട്ടു: ' + error.message);
+                alert('Login failed: ' + error.message);
             } else {
                 closeLoginModal();
                 setAdminState(true);
-                displayData(allAlumniData); // refresh table to show admin buttons
+                displayDirectory(allAlumniData);
             }
         });
 
         async function logoutAdmin() {
             await _supabase.auth.signOut();
             setAdminState(false);
-            displayData(allAlumniData);
+            displayDirectory(allAlumniData);
         }
 
         // Add / Edit Modal Controls
         function openAddModal() {
-            document.getElementById('modalTitle').innerText = 'Add New Alumni';
+            document.getElementById('modalTitle').innerText = 'Add Alumni Member';
             document.getElementById('formId').value = '';
             document.getElementById('alumniForm').reset();
             document.getElementById('alumniModal').classList.remove('hidden');
         }
 
         function openEditModal(row) {
-            document.getElementById('modalTitle').innerText = 'Edit Alumni Details';
+            document.getElementById('modalTitle').innerText = 'Edit Alumni Member';
             document.getElementById('formId').value = row.id;
-            document.getElementById('formMembershipNo').value = row.membership_no || '';
-            document.getElementById('formBatch').value = row.batch || '';
             document.getElementById('formFullName').value = row.full_name || '';
+            document.getElementById('formPlace').value = row.place || row.panchayat_municipality || '';
+            document.getElementById('formAddress').value = row.address || '';
+            document.getElementById('formBatch').value = row.batch || '';
             document.getElementById('formMobile').value = row.mobile_number || '';
-            document.getElementById('formDistrict').value = row.district || '';
-            document.getElementById('formPlace').value = row.panchayat_municipality || row.place || '';
+            document.getElementById('formWhatsApp').value = row.whatsapp_number || '';
+            document.getElementById('formEmail').value = row.email || '';
+            document.getElementById('formReligiousDegree').value = row.religious_degree || '';
+            document.getElementById('formGeneralEdu').value = row.general_education || '';
+            document.getElementById('formJob').value = row.current_job || '';
+            document.getElementById('formMembershipNo').value = row.membership_no || '';
             document.getElementById('alumniModal').classList.remove('hidden');
         }
 
-        function closeModal() {
-            document.getElementById('alumniModal').classList.add('hidden');
-        }
+        function closeModal() { document.getElementById('alumniModal').classList.add('hidden'); }
 
         document.getElementById('alumniForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('formId').value;
             const payload = {
-                membership_no: document.getElementById('formMembershipNo').value,
-                batch: document.getElementById('formBatch').value,
                 full_name: document.getElementById('formFullName').value,
+                place: document.getElementById('formPlace').value,
+                address: document.getElementById('formAddress').value,
+                batch: document.getElementById('formBatch').value,
                 mobile_number: document.getElementById('formMobile').value,
-                district: document.getElementById('formDistrict').value,
-                place: document.getElementById('formPlace').value
+                whatsapp_number: document.getElementById('formWhatsApp').value,
+                email: document.getElementById('formEmail').value,
+                religious_degree: document.getElementById('formReligiousDegree').value,
+                general_education: document.getElementById('formGeneralEdu').value,
+                current_job: document.getElementById('formJob').value,
+                membership_no: document.getElementById('formMembershipNo').value
             };
 
             let response;
@@ -456,7 +602,7 @@
             }
 
             if (response.error) {
-                alert('സേവ് ചെയ്യാൻ സാധിച്ചില്ല: ' + response.error.message);
+                alert('Save error: ' + response.error.message);
             } else {
                 closeModal();
                 loadAlumniData();
@@ -464,36 +610,33 @@
         });
 
         async function deleteAlumni(id) {
-            if (!confirm('ഈ റെക്കോർഡ് നീക്കം ചെയ്യാൻ ആഗ്രഹിക്കുന്നുണ്ടോ?')) return;
+            if (!confirm('Are you sure you want to delete this record?')) return;
             const { error } = await _supabase.from('alumni').delete().eq('id', id);
-            if (error) {
-                alert('ഡിലീറ്റ് ചെയ്യാൻ സാധിച്ചില്ല: ' + error.message);
-            } else {
-                loadAlumniData();
-            }
+            if (error) alert(error.message);
+            else loadAlumniData();
         }
 
         function exportToCSV() {
-            if (allAlumniData.length === 0) {
-                alert('ഡൗൺലോഡ് ചെയ്യാൻ ഡാറ്റ ലഭ്യമല്ല.');
-                return;
-            }
-            const headers = ["Membership No", "Full Name", "Batch", "Mobile Number", "District", "Place"];
-            const rows = allAlumniData.map(row => [
-                `"${row.membership_no || ''}"`,
-                `"${row.full_name || ''}"`,
-                `"${row.batch || ''}"`,
-                `"${row.mobile_number || ''}"`,
-                `"${row.district || ''}"`,
-                `"${row.panchayat_municipality || row.place || ''}"`
+            if (allAlumniData.length === 0) return alert('No data to export.');
+            const headers = ["Full Name", "Place", "Address", "Batch", "Mobile Number", "WhatsApp Number", "Gmail", "Religious Degree", "General Education", "Current Job", "Membership No"];
+            const rows = allAlumniData.map(r => [
+                `"${r.full_name || ''}"`,
+                `"${r.place || ''}"`,
+                `"${r.address || ''}"`,
+                `"${r.batch || ''}"`,
+                `"${r.mobile_number || ''}"`,
+                `"${r.whatsapp_number || ''}"`,
+                `"${r.email || ''}"`,
+                `"${r.religious_degree || ''}"`,
+                `"${r.general_education || ''}"`,
+                `"${r.current_job || ''}"`,
+                `"${r.membership_no || ''}"`
             ]);
-            const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+            const csv = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
             const link = document.createElement("a");
-            link.setAttribute("href", encodeURI(csvContent));
-            link.setAttribute("download", `fahm_alumni_${new Date().toISOString().slice(0,10)}.csv`);
-            document.body.appendChild(link);
+            link.href = encodeURI(csv);
+            link.download = `fahm_alumni_directory.csv`;
             link.click();
-            document.body.removeChild(link);
         }
     </script>
 </body>
