@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumni Registration Form</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 max-w-lg w-full border border-slate-100 my-8">
+        <!-- Header -->
+        <div class="text-center mb-6">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-blue-100 text-blue-900 mb-3">
+                <i class="fa-solid fa-graduation-cap text-2xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-blue-900">Alumni Registration</h2>
+            <p class="text-sm text-slate-500 mt-1">നിങ്ങളുടെ വിവരങ്ങൾ നൽകി അലുമ്നി നെറ്റ്‌വർക്കിൽ ചേരുക</p>
+        </div>
+
+        <!-- Success Message Alert -->
+        <div id="successAlert" class="hidden mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-start gap-3">
+            <i class="fa-solid fa-circle-check text-emerald-600 text-lg mt-0.5"></i>
+            <div>
+                <strong class="font-semibold block">രജിസ്ട്രേഷൻ വിജയകരമായി പൂർത്തിയായി!</strong>
+                നിങ്ങളുടെ വിവരങ്ങൾ അലുമ്നി ഡാറ്റാബേസിൽ ചേർത്തിട്ടുണ്ട്.
+            </div>
+        </div>
+
+        <!-- Registration Form -->
+        <form id="regForm" class="space-y-4">
+            <div>
+                <label class="block text-xs font-semibold mb-1 text-slate-700">പൂർണ്ണമായ പേര് (Full Name) <span class="text-rose-500">*</span></label>
+                <input type="text" id="regFullName" required placeholder="eg. Muhammed Farhan" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-slate-700">ബാച്ച് (Batch) <span class="text-rose-500">*</span></label>
+                    <input type="text" id="regBatch" required placeholder="eg. 2018-20, D2" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-slate-700">മൊബൈൽ നമ്പർ (Mobile) <span class="text-rose-500">*</span></label>
+                    <input type="tel" id="regMobile" required placeholder="eg. 9847000000" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-slate-700">ജില്ല (District) <span class="text-rose-500">*</span></label>
+                    <input type="text" id="regDistrict" required placeholder="eg. MALAPPURAM" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-slate-700">സ്ഥലം / പഞ്ചായത്ത് (Place) <span class="text-rose-500">*</span></label>
+                    <input type="text" id="regPlace" required placeholder="eg. MANJERI" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
+                </div>
+            </div>
+
+            <button type="submit" id="submitBtn" class="w-full py-3 bg-blue-900 hover:bg-blue-800 text-white font-semibold rounded-xl shadow-lg transition mt-2">
+                രജിസ്റ്റർ ചെയ്യുക (Submit)
+            </button>
+        </form>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://fpirwwpjlpkhrydpovrd.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwaXJ3d3BqbHBraHJ5ZHBvdnJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzMjcxNjgsImV4cCI6MjEwODkwMzE2OH0.dAW_xrzwbdZ4sxugVXdGqTYKzvym1sR4xav373LY8QY';
+
+        const { createClient } = supabase;
+        const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const regForm = document.getElementById('regForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const successAlert = document.getElementById('successAlert');
+
+        regForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = "സേവ് ചെയ്യുന്നു...";
+
+            // Auto-generate membership number prefix if needed
+            const randomCode = Math.floor(100 + Math.random() * 900);
+            const currentYear = new Date().getFullYear();
+            const autoMembership = `${currentYear}/${randomCode}`;
+
+            const payload = {
+                membership_no: autoMembership,
+                full_name: document.getElementById('regFullName').value.trim(),
+                batch: document.getElementById('regBatch').value.trim().toUpperCase(),
+                mobile_number: document.getElementById('regMobile').value.trim(),
+                district: document.getElementById('regDistrict').value.trim().toUpperCase(),
+                place: document.getElementById('regPlace').value.trim().toUpperCase()
+            };
+
+            const { data, error } = await _supabase.from('alumni').insert([payload]);
+
+            submitBtn.disabled = false;
+            submitBtn.innerText = "രജിസ്റ്റർ ചെയ്യുക (Submit)";
+
+            if (error) {
+                alert('രജിസ്ട്രേഷൻ പരാജയപ്പെട്ടു: ' + error.message);
+            } else {
+                regForm.reset();
+                successAlert.classList.remove('hidden');
+                setTimeout(() => {
+                    successAlert.classList.add('hidden');
+                }, 6000);
+            }
+        });
+    </script>
+</body>
+</html>
