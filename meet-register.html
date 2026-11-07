@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAHM Alumni Meet - Event Registration</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        @media print {
+            body * { visibility: hidden; }
+            #printableSlip, #printableSlip * { visibility: visible; }
+            #printableSlip { position: absolute; left: 0; top: 0; width: 100%; border: none !important; box-shadow: none !important; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 font-sans text-slate-800 antialiased min-h-screen py-8 px-4 flex items-center justify-center">
+
+    <div class="max-w-lg w-full">
+
+        <!-- 1. REGISTRATION FORM CARD -->
+        <div id="formCard" class="bg-white rounded-3xl shadow-xl p-6 sm:p-8 border border-slate-100">
+            <!-- Header -->
+            <div class="text-center mb-6">
+                <span class="px-3 py-1 bg-blue-100 text-blue-900 rounded-full text-xs font-bold uppercase tracking-wider">Official Event</span>
+                <h2 class="text-2xl font-black text-blue-950 mt-2">FAHM Alumni Meet</h2>
+                <p class="text-xs text-slate-500 mt-1">ഡെലിഗേറ്റ് രജിസ്ട്രേഷൻ പോർട്ടൽ</p>
+            </div>
+
+            <!-- Step 1: Member Lookup Box -->
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-5">
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                    മെമ്പർഷിപ്പ് നമ്പർ നൽകുക (FAHM Membership No / Mobile)
+                </label>
+                <div class="flex gap-2">
+                    <input type="text" id="lookupInput" placeholder="eg. 202325/263 or 9847..." class="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900">
+                    <button type="button" onclick="verifyMember()" id="verifyBtn" class="px-4 py-2.5 bg-blue-900 hover:bg-blue-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-check"></i> വെരിഫൈ
+                    </button>
+                </div>
+            </div>
+
+            <!-- Warning if Member NOT Found -->
+            <div id="notFoundBox" class="hidden mb-5 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs leading-relaxed flex items-start gap-3">
+                <i class="fa-solid fa-triangle-exclamation text-amber-600 text-lg mt-0.5"></i>
+                <div>
+                    <strong class="font-bold block text-sm mb-0.5">മെമ്പർഷിപ്പ് കണ്ടെത്താനായില്ല!</strong>
+                    നിങ്ങളുടെ വിവരങ്ങൾ ഇതുവരെ രജിസ്റ്റർ ചെയ്തിട്ടില്ല. ദയവായി നിങ്ങളുടെ കമ്മിറ്റി പ്രതിനിധികളുമായി ബന്ധപ്പെട്ട് മെമ്പർഷിപ്പ് നമ്പർ സ്വീകരിക്കുക.
+                </div>
+            </div>
+
+            <!-- Step 2: Auto-filled Member Details Form -->
+            <form id="eventRegForm" class="space-y-4 hidden" onsubmit="submitEventRegistration(event)">
+                <div class="bg-blue-50/70 border border-blue-100 p-4 rounded-2xl space-y-2 text-xs">
+                    <div class="flex justify-between border-b border-blue-100 pb-2">
+                        <span class="text-slate-500">പേര്:</span>
+                        <strong id="displayFullName" class="text-slate-900 text-sm">-</strong>
+                    </div>
+                    <div class="flex justify-between border-b border-blue-100 pb-2">
+                        <span class="text-slate-500">മെമ്പർഷിപ്പ് നമ്പർ:</span>
+                        <strong id="displayMembNo" class="text-blue-950 font-bold">-</strong>
+                    </div>
+                    <div class="flex justify-between border-b border-blue-100 pb-2">
+                        <span class="text-slate-500">ബാച്ച്:</span>
+                        <strong id="displayBatch" class="text-slate-900">-</strong>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">സ്ഥലം:</span>
+                        <strong id="displayPlace" class="text-slate-900">-</strong>
+                    </div>
+                </div>
+
+                <!-- Hidden inputs for submission -->
+                <input type="hidden" id="subMembNo">
+                <input type="hidden" id="subFullName">
+                <input type="hidden" id="subBatch">
+                <input type="hidden" id="subMobile">
+                <input type="hidden" id="subPlace">
+
+                <!-- Declaration Checkbox -->
+                <div class="pt-2">
+                    <label class="flex items-start gap-2.5 cursor-pointer">
+                        <input type="checkbox" id="declarationCheck" required class="mt-1 w-4 h-4 text-blue-900 rounded border-slate-300 focus:ring-blue-900">
+                        <span class="text-xs text-slate-700 leading-snug">
+                            തീർച്ചയായും ഞാൻ പ്രസ്തുത അലുമ്നി മീറ്റിൽ പങ്കെടുക്കുമെന്ന് ഉറപ്പ് നൽകുന്നു (I confirm my participation).
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="submitBtn" class="w-full py-3.5 bg-blue-900 hover:bg-blue-800 text-white font-bold rounded-2xl text-sm transition shadow-lg flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-ticket"></i> രജിസ്ട്രേഷൻ കൺഫേം ചെയ്യുക
+                </button>
+            </form>
+        </div>
+
+        <!-- 2. DIGITAL PASS / SLIP (Generated on Success) -->
+        <div id="printableSlip" class="hidden bg-white rounded-3xl shadow-2xl p-6 sm:p-8 border border-slate-200 text-center relative overflow-hidden">
+            <!-- Decorative ribbon -->
+            <div class="w-full h-3 bg-gradient-to-r from-blue-900 via-indigo-600 to-emerald-500 absolute top-0 left-0"></div>
+
+            <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl mx-auto mt-2 mb-3">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+
+            <h3 class="text-xl font-black text-slate-800">DELEGATE PASS</h3>
+            <p class="text-xs text-slate-400 font-semibold tracking-wider uppercase mb-5">FAHM ALUMNI MEET</p>
+
+            <!-- Pass Token Box -->
+            <div class="bg-slate-50 border-2 border-dashed border-slate-300 p-4 rounded-2xl mb-5 inline-block w-full">
+                <span class="text-[11px] text-slate-400 font-bold uppercase tracking-widest block">Entry Registration Token</span>
+                <span id="passToken" class="text-2xl sm:text-3xl font-black text-blue-950 tracking-wider">#FAHM-000</span>
+            </div>
+
+            <!-- Pass User Details -->
+            <div class="text-left bg-slate-50 rounded-2xl p-4 text-xs space-y-2 border border-slate-100 mb-6">
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Delegate Name:</span>
+                    <strong id="passName" class="text-slate-800 text-sm">-</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">FAHM Memb No:</span>
+                    <strong id="passMembNo" class="text-slate-800">-</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Batch:</span>
+                    <strong id="passBatch" class="text-slate-800">-</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Place:</span>
+                    <strong id="passPlace" class="text-slate-800">-</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Status:</span>
+                    <strong class="text-emerald-700 font-bold">Confirmed Delegate</strong>
+                </div>
+            </div>
+
+            <!-- Print / Download buttons (hidden on print) -->
+            <div class="flex gap-2 no-print">
+                <button onclick="window.print()" class="flex-1 py-3 bg-blue-900 hover:bg-blue-800 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-print"></i> പ്രിന്റ് / സേവ് ചെയ്യുക
+                </button>
+                <button onclick="location.reload()" class="px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">
+                    Done
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://fpirwwpjlpkhrydpovrd.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwaXJ3d3BqbHBraHJ5ZHBvdnJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzMjcxNjgsImV4cCI6MjEwODkwMzE2OH0.dAW_xrzwbdZ4sxugVXdGqTYKzvym1sR4xav373LY8QY';
+
+        const { createClient } = supabase;
+        const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let activeMember = null;
+
+        // Step 1: Look up member
+        async function verifyMember() {
+            const query = document.getElementById('lookupInput').value.trim();
+            const btn = document.getElementById('verifyBtn');
+            const notFoundBox = document.getElementById('notFoundBox');
+            const eventRegForm = document.getElementById('eventRegForm');
+
+            if (!query) {
+                alert('ദയവായി മെമ്പർഷിപ്പ് നമ്പറോ മൊബൈൽ നമ്പറോ ടൈപ്പ് ചെയ്യുക.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Checking...`;
+            notFoundBox.classList.add('hidden');
+            eventRegForm.classList.add('hidden');
+
+            // Search in alumni table
+            const { data, error } = await _supabase
+                .from('alumni')
+                .select('*')
+                .or(`membership_no.eq.${query},mobile_number.eq.${query}`)
+                .limit(1);
+
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fa-solid fa-check"></i> വെരിഫൈ`;
+
+            if (error || !data || data.length === 0) {
+                notFoundBox.classList.remove('hidden');
+                activeMember = null;
+                return;
+            }
+
+            activeMember = data[0];
+
+            // Auto-populate fields
+            document.getElementById('displayFullName').innerText = activeMember.full_name || '-';
+            document.getElementById('displayMembNo').innerText = activeMember.membership_no || '-';
+            document.getElementById('displayBatch').innerText = activeMember.batch || '-';
+            document.getElementById('displayPlace').innerText = activeMember.place || activeMember.panchayat_municipality || '-';
+
+            document.getElementById('subMembNo').value = activeMember.membership_no || '';
+            document.getElementById('subFullName').value = activeMember.full_name || '';
+            document.getElementById('subBatch').value = activeMember.batch || '';
+            document.getElementById('subMobile').value = activeMember.mobile_number || '';
+            document.getElementById('subPlace').value = activeMember.place || activeMember.panchayat_municipality || '';
+
+            eventRegForm.classList.remove('hidden');
+        }
+
+        // Step 2: Submit registration and show printable pass
+        async function submitEventRegistration(e) {
+            e.preventDefault();
+
+            if (!document.getElementById('declarationCheck').checked) {
+                alert('ദയവായി പങ്കാളിത്തം ഉറപ്പ് വരുത്തുന്ന ഡിക്ലറേഷൻ ടിക്ക് ചെയ്യുക.');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> രജിസ്റ്റർ ചെയ്യുന്നു...`;
+
+            // Generate unique event token (e.g. FAHM-MEET-8291)
+            const randomCode = Math.floor(1000 + Math.random() * 9000);
+            const token = `MEET-${randomCode}`;
+
+            const payload = {
+                membership_no: document.getElementById('subMembNo').value,
+                full_name: document.getElementById('subFullName').value,
+                batch: document.getElementById('subBatch').value,
+                mobile_number: document.getElementById('subMobile').value,
+                place: document.getElementById('subPlace').value,
+                event_pass_no: token,
+                attending: true
+            };
+
+            const { data, error } = await _supabase.from('event_registrations').insert([payload]);
+
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<i class="fa-solid fa-ticket"></i> രജിസ്ട്രേഷൻ കൺഫേം ചെയ്യുക`;
+
+            if (error) {
+                alert('രജിസ്ട്രേഷൻ പരാജയപ്പെട്ടു: ' + error.message);
+                return;
+            }
+
+            // Fill & Show Pass
+            document.getElementById('passToken').innerText = token;
+            document.getElementById('passName').innerText = payload.full_name;
+            document.getElementById('passMembNo').innerText = payload.membership_no || 'N/A';
+            document.getElementById('passBatch').innerText = payload.batch || '-';
+            document.getElementById('passPlace').innerText = payload.place || '-';
+
+            document.getElementById('formCard').classList.add('hidden');
+            document.getElementById('printableSlip').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
