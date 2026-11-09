@@ -10,81 +10,67 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- PWA Settings (For App Installation) -->
-    <meta name="theme-color" content="#f0f7ff">
-    <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiRkFITSBBbHVtbmkiLCJzaG9ydF9uYW1lIjoiRkFITSIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIbackground_colorIjoiI2YwZjdmZiJ9">
 </head>
 <body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen flex flex-col">
 
-    <!-- Clean, Light Navbar -->
-    <nav class="bg-white border-b border-blue-100 sticky top-0 z-40 shadow-sm">
+    <!-- Clean, Single-Row Navbar -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
+            <div class="flex justify-between items-center h-20 gap-4">
                 
-                <!-- Logo & Brand (Replace logo.png with your real logo file) -->
-                <div class="flex items-center gap-3">
-                    <div class="h-11 flex items-center justify-center shrink-0">
-    <img src="logo.png" alt="FAHM Logo" class="h-10 w-auto object-contain">
-</div>
-<div>
-    <h1 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-tight">FAHM ALUMNI</h1>
-    <p class="text-xs text-blue-700 font-medium">Federation of Alumni of Al hasanath Mampuzha</p>
-</div>
-                        <h1 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-tight">FAHM ALUMNI</h1>
-                        <p class="text-xs text-blue-700 font-medium">Official Community Portal</p>
+                <!-- Logo & Single Brand Info -->
+                <div class="flex items-center gap-3 shrink-0">
+                    <img src="logo.png" onerror="this.style.display='none'" alt="FAHM Logo" class="h-12 w-auto object-contain">
+                    <div>
+                        <h1 class="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight leading-tight">FAHM ALUMNI</h1>
+                        <p class="text-[11px] sm:text-xs text-blue-700 font-medium leading-tight">Federation of Alumni of Al hasanath Mampuzha</p>
                     </div>
                 </div>
 
                 <!-- Desktop Tab Switcher -->
-                <div class="hidden md:flex items-center gap-1 bg-blue-50/80 p-1 rounded-xl text-xs sm:text-sm font-medium border border-blue-100">
-                    <button onclick="switchTab('dashboard')" id="tabBtn-dashboard" class="tab-btn px-3.5 py-1.5 rounded-lg bg-white text-blue-900 font-bold shadow-sm transition">
+                <div class="hidden lg:flex items-center gap-1 bg-slate-100 p-1.5 rounded-2xl text-xs sm:text-sm font-semibold">
+                    <button onclick="switchTab('dashboard')" id="tabBtn-dashboard" class="tab-btn px-4 py-2 rounded-xl bg-white text-slate-900 shadow-sm transition">
                         <i class="fa-solid fa-house mr-1.5 text-blue-600"></i> Home
                     </button>
-                    <button onclick="switchTab('directory')" id="tabBtn-directory" class="tab-btn px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-blue-900 transition">
+                    <button onclick="switchTab('directory')" id="tabBtn-directory" class="tab-btn px-4 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition">
                         <i class="fa-solid fa-users mr-1.5 text-slate-400"></i> Directory
                     </button>
-                    <button onclick="switchTab('profile')" id="tabBtn-profile" class="tab-btn px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-blue-900 transition">
+                    <button onclick="switchTab('profile')" id="tabBtn-profile" class="tab-btn px-4 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition">
                         <i class="fa-solid fa-id-card mr-1.5 text-slate-400"></i> Find Profile
                     </button>
-                    <button onclick="switchTab('forms')" id="tabBtn-forms" class="tab-btn px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-blue-900 transition">
+                    <button onclick="switchTab('forms')" id="tabBtn-forms" class="tab-btn px-4 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition">
                         <i class="fa-solid fa-link mr-1.5 text-slate-400"></i> Forms & Events
                     </button>
                 </div>
 
-                <!-- Actions: Install App, Admin, & Mobile Toggle -->
-                <div class="flex items-center gap-2">
-                    <!-- Install App Button (Auto shows on supported mobile/desktop) -->
-                    <button id="installAppBtn" onclick="installApp()" class="hidden px-3 py-1.5 bg-blue-50 text-blue-800 hover:bg-blue-100 border border-blue-200 text-xs font-semibold rounded-xl transition flex items-center gap-1.5 shadow-sm">
-                        <i class="fa-solid fa-download"></i> <span class="hidden sm:inline">Install App</span>
-                    </button>
-
-                    <button id="showLoginModalBtn" onclick="openLoginModal()" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold rounded-xl transition border border-slate-200 flex items-center gap-1.5">
+                <!-- Admin Action & Mobile Hamburger -->
+                <div class="flex items-center gap-2 shrink-0">
+                    <button id="showLoginModalBtn" onclick="openLoginModal()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold rounded-xl transition border border-slate-200 flex items-center gap-1.5">
                         <i class="fa-solid fa-lock text-xs text-slate-500"></i> Admin
                     </button>
 
                     <div id="adminActions" class="hidden flex items-center gap-1.5">
-                        <button onclick="openAddModal()" class="px-3 py-1.5 bg-blue-900 hover:bg-blue-800 text-white text-xs font-semibold rounded-xl transition shadow flex items-center gap-1">
+                        <button onclick="openAddModal()" class="px-3 py-2 bg-blue-900 hover:bg-blue-800 text-white text-xs font-semibold rounded-xl transition shadow flex items-center gap-1">
                             <i class="fa-solid fa-plus"></i> Add
                         </button>
-                        <button onclick="exportToCSV()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition shadow flex items-center gap-1">
+                        <button onclick="exportToCSV()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition shadow flex items-center gap-1">
                             <i class="fa-solid fa-file-excel"></i> Export
                         </button>
-                        <button onclick="logoutAdmin()" class="px-3 py-1.5 bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 text-xs font-semibold rounded-xl transition" title="Logout">
+                        <button onclick="logoutAdmin()" class="px-3 py-2 bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 text-xs font-semibold rounded-xl transition" title="Logout">
                             <i class="fa-solid fa-right-from-bracket"></i>
                         </button>
                     </div>
 
-                    <!-- Mobile Drawer Toggle -->
-                    <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-slate-600 hover:text-slate-900 rounded-lg">
+                    <!-- Mobile Hamburger Toggle -->
+                    <button onclick="toggleMobileMenu()" class="lg:hidden p-2 text-slate-600 hover:text-slate-900 rounded-lg">
                         <i class="fa-solid fa-bars text-xl" id="menuIcon"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Mobile Menu Drawer -->
-        <div id="mobileMenu" class="hidden md:hidden border-t border-blue-100 bg-white px-4 pt-2 pb-4 space-y-1">
+        <!-- Mobile Drawer Menu -->
+        <div id="mobileMenu" class="hidden lg:hidden border-t border-slate-100 bg-white px-4 pt-2 pb-4 space-y-1">
             <button onclick="switchTabMobile('dashboard')" class="w-full text-left px-3 py-2.5 rounded-lg font-medium text-sm text-slate-700 hover:bg-blue-50 flex items-center gap-2">
                 <i class="fa-solid fa-house text-blue-600 w-4"></i> Home
             </button>
@@ -100,13 +86,13 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
+    <!-- Main Content Area -->
     <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 flex-1 w-full">
 
-        <!-- 1. DASHBOARD TAB (Light Blue Minimal Look) -->
+        <!-- 1. DASHBOARD TAB -->
         <section id="tab-dashboard" class="tab-content space-y-6">
-            <!-- Replaced dark curve with soft, light blue elegant banner -->
-            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 sm:p-10 border border-blue-100 shadow-sm relative overflow-hidden">
+            <!-- Light Blue Elegant Welcome Banner -->
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50/60 rounded-3xl p-6 sm:p-10 border border-blue-100 shadow-sm relative overflow-hidden">
                 <div class="relative z-10 max-w-2xl">
                     <span class="inline-block text-xs uppercase tracking-wider font-semibold text-blue-800 bg-blue-100 px-3 py-1 rounded-full mb-3">Community Portal</span>
                     <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mb-2">Welcome to FAHM Alumni Portal</h2>
@@ -123,7 +109,7 @@
                 <i class="fa-solid fa-graduation-cap absolute -right-6 -bottom-8 text-9xl text-blue-900/5 pointer-events-none"></i>
             </div>
 
-            <!-- Metric Cards -->
+            <!-- Stats Metric Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4">
                     <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-xl shrink-0">
@@ -157,7 +143,6 @@
 
         <!-- 2. DIRECTORY TAB -->
         <section id="tab-directory" class="tab-content hidden space-y-6">
-            <!-- Filter Bar with District / Taluk / Batch -->
             <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-200/80 flex flex-col md:flex-row gap-3 justify-between items-center">
                 <div class="w-full md:w-1/2 relative">
                     <i class="fa-solid fa-search absolute left-4 top-3.5 text-slate-400"></i>
@@ -169,7 +154,7 @@
                 </div>
             </div>
 
-            <!-- Cards Container -->
+            <!-- Directory Grid Container -->
             <div id="directoryContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </section>
 
@@ -195,11 +180,9 @@
 
         <!-- 4. FORMS & EVENTS TAB -->
         <section id="tab-forms" class="tab-content hidden space-y-6">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h3 class="text-lg font-bold text-slate-800">Forms & Event Registrations</h3>
-                    <p class="text-xs text-slate-500">Access ongoing programs and official forms</p>
-                </div>
+            <div>
+                <h3 class="text-lg font-bold text-slate-800">Forms & Event Registrations</h3>
+                <p class="text-xs text-slate-500">Access ongoing programs and official forms</p>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -211,7 +194,7 @@
                     </div>
                     <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between">
                         <span class="text-xs text-slate-400"><i class="fa-regular fa-calendar mr-1"></i> Upcoming</span>
-                        <a href="#" class="px-3.5 py-1.5 bg-blue-900 hover:bg-blue-800 text-white rounded-lg text-xs font-semibold transition">Open Form</a>
+                        <a href="meet-register.html" class="px-3.5 py-1.5 bg-blue-900 hover:bg-blue-800 text-white rounded-lg text-xs font-semibold transition">Open Form</a>
                     </div>
                 </div>
             </div>
@@ -248,7 +231,7 @@
         </div>
     </div>
 
-    <!-- Modal for Add / Edit (Matching New Sheet Columns) -->
+    <!-- Modal for Add / Edit Alumni -->
     <div id="alumniModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
         <div class="bg-white rounded-2xl p-6 max-w-xl w-full shadow-xl my-8">
             <div class="flex justify-between items-center mb-4">
@@ -329,7 +312,7 @@
         </div>
     </div>
 
-    <!-- Script Logic -->
+    <!-- Script Logic (Full Dynamic Headers Matching) -->
     <script>
         const SUPABASE_URL = 'https://fpirwwpjlpkhrydpovrd.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwaXJ3d3BqbHBraHJ5ZHBvdnJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzMjcxNjgsImV4cCI6MjEwODkwMzE2OH0.dAW_xrzwbdZ4sxugVXdGqTYKzvym1sR4xav373LY8QY';
@@ -339,28 +322,6 @@
 
         let allAlumniData = [];
         let isAdminLoggedIn = false;
-        let deferredPrompt;
-
-        // PWA Install Prompt Listener
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('installAppBtn').classList.remove('hidden');
-        });
-
-        function installApp() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        document.getElementById('installAppBtn').classList.add('hidden');
-                    }
-                    deferredPrompt = null;
-                });
-            } else {
-                alert('Install from browser menu: Tap Share/Settings -> "Add to Home Screen"');
-            }
-        }
 
         function cleanNumber(num) {
             if (!num) return '';
@@ -388,13 +349,15 @@
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.className = "tab-btn px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-blue-900 transition";
+                btn.className = "tab-btn px-4 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition";
             });
 
-            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            const target = document.getElementById(`tab-${tabName}`);
+            if (target) target.classList.remove('hidden');
+
             const activeBtn = document.getElementById(`tabBtn-${tabName}`);
             if (activeBtn) {
-                activeBtn.className = "tab-btn px-3.5 py-1.5 rounded-lg bg-white text-blue-900 font-bold shadow-sm transition";
+                activeBtn.className = "tab-btn px-4 py-2 rounded-xl bg-white text-slate-900 font-bold shadow-sm transition";
             }
         }
 
@@ -430,173 +393,172 @@
 
         function updateStats(data) {
             document.getElementById('statTotal').innerText = data.length;
-            const batches = new Set(data.map(d => d.batch).filter(Boolean));
-            const districts = new Set(data.map(d => d.district).filter(Boolean));
+            const batches = new Set(data.map(d => d['BATCH'] || d.batch).filter(Boolean));
+            const districts = new Set(data.map(d => d['DISTRICT'] || d.district).filter(Boolean));
             document.getElementById('statBatches').innerText = batches.size;
             document.getElementById('statDistricts').innerText = districts.size;
         }
 
         function displayDirectory(data) {
-    const container = document.getElementById('directoryContainer');
-    container.innerHTML = '';
+            const container = document.getElementById('directoryContainer');
+            container.innerHTML = '';
 
-    if (data.length === 0) {
-        container.innerHTML = `<div class="col-span-full p-8 text-center text-slate-400">No records found.</div>`;
-        return;
-    }
+            if (data.length === 0) {
+                container.innerHTML = `<div class="col-span-full p-8 text-center text-slate-400">No records found.</div>`;
+                return;
+            }
 
-    data.forEach(row => {
-        // വലിയ അക്ഷരങ്ങളിലോ ചെറിയ അക്ഷരങ്ങളിലോ ഉള്ള ഫീൽഡുകൾ പിന്തുണയ്ക്കുന്നു
-        const fullName = row['NAME'] || row.name || row.full_name || '-';
-        const membNo = row['MEMBERSHIP NUMBER'] || row.membership_number || row.membership_no || 'N/A';
-        const batch = row['BATCH'] || row.batch || '-';
-        const mobile = row['MOBILE'] || row.mobile || row.mobile_number || '';
-        const whatsapp = row['Whatsapp number'] || row.whatsapp_number || mobile;
-        const place = row['PANCHAYATH/MUNICIPALITY'] || row.panchayath_municipality || row.place || '';
-        const district = row['DISTRICT'] || row.district || '';
-        const degree = row['RELIGIOUS DEGREE'] || row.religious_degree || '-';
+            data.forEach(row => {
+                const fullName = row['NAME'] || row.name || row.full_name || '-';
+                const membNo = row['MEMBERSHIP NUMBER'] || row.membership_number || row.membership_no || 'N/A';
+                const batch = row['BATCH'] || row.batch || '-';
+                const mobile = row['MOBILE'] || row.mobile || row.mobile_number || '';
+                const whatsapp = row['Whatsapp number'] || row.whatsapp_number || mobile;
+                const place = row['PANCHAYATH/MUNICIPALITY'] || row.panchayath_municipality || row.place || '';
+                const district = row['DISTRICT'] || row.district || '';
+                const degree = row['RELIGIOUS DEGREE'] || row.religious_degree || '-';
 
-        const callPhone = cleanNumber(mobile);
-        const waPhone = cleanNumber(whatsapp);
+                const callPhone = cleanNumber(mobile);
+                const waPhone = cleanNumber(whatsapp);
 
-        const card = document.createElement('div');
-        card.className = "bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between hover:shadow-md transition";
-        card.innerHTML = `
-            <div>
-                <div class="flex justify-between items-start mb-2">
+                const card = document.createElement('div');
+                card.className = "bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between hover:shadow-md transition";
+                card.innerHTML = `
                     <div>
-                        <h4 class="font-bold text-slate-900 text-base leading-tight">${fullName}</h4>
-                        <span class="text-[11px] text-blue-800 font-semibold bg-blue-50 px-2 py-0.5 rounded-md mt-1 inline-block">Memb. No: ${membNo}</span>
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-base leading-tight">${fullName}</h4>
+                                <span class="text-[11px] text-blue-800 font-semibold bg-blue-50 px-2 py-0.5 rounded-md mt-1 inline-block">Memb. No: ${membNo}</span>
+                            </div>
+                            <span class="px-2.5 py-1 bg-slate-100 text-slate-700 font-semibold rounded-lg text-xs">${batch}</span>
+                        </div>
+
+                        <div class="space-y-1.5 text-xs text-slate-600 my-3">
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-location-dot w-3.5 text-blue-500"></i> <span>${place} ${district ? '(' + district + ')' : ''}</span></div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-graduation-cap w-3.5 text-slate-400"></i> <span>${degree}</span></div>
+                        </div>
                     </div>
-                    <span class="px-2.5 py-1 bg-slate-100 text-slate-700 font-semibold rounded-lg text-xs">${batch}</span>
-                </div>
 
-                <div class="space-y-1.5 text-xs text-slate-600 my-3">
-                    <div class="flex items-center gap-2"><i class="fa-solid fa-location-dot w-3.5 text-blue-500"></i> <span>${place} ${district ? '(' + district + ')' : ''}</span></div>
-                    <div class="flex items-center gap-2"><i class="fa-solid fa-graduation-cap w-3.5 text-slate-400"></i> <span>${degree}</span></div>
-                </div>
-            </div>
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 mt-2">
+                        <div class="flex gap-2">
+                            ${callPhone ? `
+                                <a href="tel:+${callPhone}" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-800 rounded-lg text-xs font-semibold transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-phone"></i> Call
+                                </a>
+                            ` : ''}
+                            ${waPhone ? `
+                                <a href="https://wa.me/${waPhone}" target="_blank" class="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-lg text-xs font-semibold transition flex items-center gap-1.5">
+                                    <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
+                                </a>
+                            ` : ''}
+                        </div>
 
-            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 mt-2">
-                <div class="flex gap-2">
-                    ${callPhone ? `
-                        <a href="tel:+${callPhone}" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-800 rounded-lg text-xs font-semibold transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-phone"></i> Call
-                        </a>
-                    ` : ''}
-                    ${waPhone ? `
-                        <a href="https://wa.me/${waPhone}" target="_blank" class="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-lg text-xs font-semibold transition flex items-center gap-1.5">
-                            <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
-                        </a>
-                    ` : ''}
-                </div>
-
-                ${isAdminLoggedIn ? `
-                    <div class="flex gap-1">
-                        <button onclick='openEditModal(${JSON.stringify(row)})' class="p-2 text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button onclick='deleteAlumni("${row.id}")' class="p-2 text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg text-xs"><i class="fa-solid fa-trash-can"></i></button>
+                        ${isAdminLoggedIn ? `
+                            <div class="flex gap-1">
+                                <button onclick='openEditModal(${JSON.stringify(row)})' class="p-2 text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick='deleteAlumni("${row.id}")' class="p-2 text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg text-xs"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        ` : ''}
                     </div>
-                ` : ''}
-            </div>
-        `;
-        container.appendChild(card);
-    });
-}
+                `;
+                container.appendChild(card);
+            });
+        }
 
-function filterDirectory() {
-    const searchVal = document.getElementById('searchInput').value.toLowerCase();
-    const batchVal = document.getElementById('filterBatch').value.toLowerCase();
-    const distVal = document.getElementById('filterDistrict').value.toLowerCase();
+        function filterDirectory() {
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const batchVal = document.getElementById('filterBatch').value.toLowerCase();
+            const distVal = document.getElementById('filterDistrict').value.toLowerCase();
 
-    const filtered = allAlumniData.filter(row => {
-        const name = (row['NAME'] || row.name || row.full_name || '').toLowerCase();
-        const memb = (row['MEMBERSHIP NUMBER'] || row.membership_number || row.membership_no || '').toLowerCase();
-        const mob = (row['MOBILE'] || row.mobile || row.mobile_number || '').toString().toLowerCase();
-        const panch = (row['PANCHAYATH/MUNICIPALITY'] || row.panchayath_municipality || row.place || '').toLowerCase();
-        const dist = (row['DISTRICT'] || row.district || '').toLowerCase();
-        const batch = (row['BATCH'] || row.batch || '').toLowerCase();
+            const filtered = allAlumniData.filter(row => {
+                const name = (row['NAME'] || row.name || row.full_name || '').toLowerCase();
+                const memb = (row['MEMBERSHIP NUMBER'] || row.membership_number || row.membership_no || '').toLowerCase();
+                const mob = (row['MOBILE'] || row.mobile || row.mobile_number || '').toString().toLowerCase();
+                const panch = (row['PANCHAYATH/MUNICIPALITY'] || row.panchayath_municipality || row.place || '').toLowerCase();
+                const dist = (row['DISTRICT'] || row.district || '').toLowerCase();
+                const batch = (row['BATCH'] || row.batch || '').toLowerCase();
 
-        const matchSearch = name.includes(searchVal) || memb.includes(searchVal) || mob.includes(searchVal) || panch.includes(searchVal);
-        const matchBatch = batch.includes(batchVal);
-        const matchDist = dist.includes(distVal);
-        return matchSearch && matchBatch && matchDist;
-    });
+                const matchSearch = name.includes(searchVal) || memb.includes(searchVal) || mob.includes(searchVal) || panch.includes(searchVal);
+                const matchBatch = batch.includes(batchVal);
+                const matchDist = dist.includes(distVal);
+                return matchSearch && matchBatch && matchDist;
+            });
 
-    displayDirectory(filtered);
-}
+            displayDirectory(filtered);
+        }
 
-function searchMyProfile() {
-    const query = document.getElementById('profileSearchInput').value.trim().toLowerCase();
-    const resultCard = document.getElementById('profileResultCard');
+        function searchMyProfile() {
+            const query = document.getElementById('profileSearchInput').value.trim().toLowerCase();
+            const resultCard = document.getElementById('profileResultCard');
 
-    if (!query) {
-        alert('Please enter mobile or membership number.');
-        return;
-    }
+            if (!query) {
+                alert('Please enter mobile or membership number.');
+                return;
+            }
 
-    const match = allAlumniData.find(r => {
-        const memb = (r['MEMBERSHIP NUMBER'] || r.membership_number || r.membership_no || '').toString().toLowerCase();
-        const mob = (r['MOBILE'] || r.mobile || r.mobile_number || '').toString().toLowerCase();
-        const wa = (r['Whatsapp number'] || r.whatsapp_number || '').toString().toLowerCase();
-        return (memb && memb === query) || (mob && mob.includes(query)) || (wa && wa.includes(query));
-    });
+            const match = allAlumniData.find(r => {
+                const memb = (r['MEMBERSHIP NUMBER'] || r.membership_number || r.membership_no || '').toString().toLowerCase();
+                const mob = (r['MOBILE'] || r.mobile || r.mobile_number || '').toString().toLowerCase();
+                const wa = (r['Whatsapp number'] || r.whatsapp_number || '').toString().toLowerCase();
+                return (memb && memb === query) || (mob && mob.includes(query)) || (wa && wa.includes(query));
+            });
 
-    resultCard.classList.remove('hidden');
+            resultCard.classList.remove('hidden');
 
-    if (!match) {
-        resultCard.innerHTML = `
-            <div class="bg-rose-50 border border-rose-200 text-rose-800 p-5 rounded-2xl text-center text-sm">
-                No profile found matching "${query}". Please verify details.
-            </div>
-        `;
-        return;
-    }
+            if (!match) {
+                resultCard.innerHTML = `
+                    <div class="bg-rose-50 border border-rose-200 text-rose-800 p-5 rounded-2xl text-center text-sm">
+                        No profile found matching "${query}". Please verify details.
+                    </div>
+                `;
+                return;
+            }
 
-    const name = match['NAME'] || match.name || match.full_name || '-';
-    const membNo = match['MEMBERSHIP NUMBER'] || match.membership_number || match.membership_no || 'N/A';
-    const batch = match['BATCH'] || match.batch || '-';
-    const addr = match['ADDRESS'] || match.address || '-';
-    const panch = match['PANCHAYATH/MUNICIPALITY'] || match.panchayath_municipality || match.place || '-';
-    const taluk = match['TALUK'] || match.taluk || '-';
-    const dist = match['DISTRICT'] || match.district || '-';
-    const mob = match['MOBILE'] || match.mobile || match.mobile_number || '-';
-    const wa = match['Whatsapp number'] || match.whatsapp_number || '-';
-    const mail = match['E-MAIL'] || match.email || '-';
-    const dob = match['DATE OF BIRTH'] || match.date_of_birth || '-';
-    const degree = match['RELIGIOUS DEGREE'] || match.religious_degree || '-';
+            const name = match['NAME'] || match.name || match.full_name || '-';
+            const membNo = match['MEMBERSHIP NUMBER'] || match.membership_number || match.membership_no || 'N/A';
+            const batch = match['BATCH'] || match.batch || '-';
+            const addr = match['ADDRESS'] || match.address || '-';
+            const panch = match['PANCHAYATH/MUNICIPALITY'] || match.panchayath_municipality || match.place || '-';
+            const taluk = match['TALUK'] || match.taluk || '-';
+            const dist = match['DISTRICT'] || match.district || '-';
+            const mob = match['MOBILE'] || match.mobile || match.mobile_number || '-';
+            const wa = match['Whatsapp number'] || match.whatsapp_number || '-';
+            const mail = match['E-MAIL'] || match.email || '-';
+            const dob = match['DATE OF BIRTH'] || match.date_of_birth || '-';
+            const degree = match['RELIGIOUS DEGREE'] || match.religious_degree || '-';
 
-    const callPhone = cleanNumber(mob);
-    const waPhone = cleanNumber(wa || mob);
+            const callPhone = cleanNumber(mob);
+            const waPhone = cleanNumber(wa || mob);
 
-    resultCard.innerHTML = `
-        <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
-            <div class="flex justify-between items-start pb-4 border-b border-slate-100">
-                <div>
-                    <span class="text-xs font-semibold text-blue-900 bg-blue-50 px-2.5 py-1 rounded-lg">Memb. No: ${membNo}</span>
-                    <h3 class="text-xl font-bold text-slate-900 mt-2">${name}</h3>
-                    <p class="text-xs text-slate-500">${dist} • Batch ${batch}</p>
+            resultCard.innerHTML = `
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                    <div class="flex justify-between items-start pb-4 border-b border-slate-100">
+                        <div>
+                            <span class="text-xs font-semibold text-blue-900 bg-blue-50 px-2.5 py-1 rounded-lg">Memb. No: ${membNo}</span>
+                            <h3 class="text-xl font-bold text-slate-900 mt-2">${name}</h3>
+                            <p class="text-xs text-slate-500">${dist} • Batch ${batch}</p>
+                        </div>
+                        <div class="flex gap-2">
+                            ${callPhone ? `<a href="tel:+${callPhone}" class="p-2.5 bg-blue-50 text-blue-700 rounded-xl text-sm"><i class="fa-solid fa-phone"></i></a>` : ''}
+                            ${waPhone ? `<a href="https://wa.me/${waPhone}" target="_blank" class="p-2.5 bg-emerald-50 text-emerald-700 rounded-xl text-sm"><i class="fa-brands fa-whatsapp text-lg"></i></a>` : ''}
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-slate-700 mt-4">
+                        <div><strong class="text-slate-400 block mb-0.5">Address</strong> ${addr}</div>
+                        <div><strong class="text-slate-400 block mb-0.5">Panchayath / Place</strong> ${panch}</div>
+                        <div><strong class="text-slate-400 block mb-0.5">Taluk</strong> ${taluk}</div>
+                        <div><strong class="text-slate-400 block mb-0.5">District</strong> ${dist}</div>
+                        <div><strong class="text-slate-400 block mb-0.5">Mobile</strong> ${mob}</div>
+                        <div><strong class="text-slate-400 block mb-0.5">WhatsApp</strong> ${wa}</div>
+                        <div><strong class="text-slate-400 block mb-0.5">E-mail</strong> ${mail}</div>
+                        <div><strong class="text-slate-400 block mb-0.5">Date of Birth</strong> ${dob}</div>
+                        <div><strong class="text-slate-400 block mb-0.5">Religious Degree</strong> ${degree}</div>
+                    </div>
                 </div>
-                <div class="flex gap-2">
-                    ${callPhone ? `<a href="tel:+${callPhone}" class="p-2.5 bg-blue-50 text-blue-700 rounded-xl text-sm"><i class="fa-solid fa-phone"></i></a>` : ''}
-                    ${waPhone ? `<a href="https://wa.me/${waPhone}" target="_blank" class="p-2.5 bg-emerald-50 text-emerald-700 rounded-xl text-sm"><i class="fa-brands fa-whatsapp text-lg"></i></a>` : ''}
-                </div>
-            </div>
+            `;
+        }
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-slate-700 mt-4">
-                <div><strong class="text-slate-400 block mb-0.5">Address</strong> ${addr}</div>
-                <div><strong class="text-slate-400 block mb-0.5">Panchayath / Place</strong> ${panch}</div>
-                <div><strong class="text-slate-400 block mb-0.5">Taluk</strong> ${taluk}</div>
-                <div><strong class="text-slate-400 block mb-0.5">District</strong> ${dist}</div>
-                <div><strong class="text-slate-400 block mb-0.5">Mobile</strong> ${mob}</div>
-                <div><strong class="text-slate-400 block mb-0.5">WhatsApp</strong> ${wa}</div>
-                <div><strong class="text-slate-400 block mb-0.5">E-mail</strong> ${mail}</div>
-                <div><strong class="text-slate-400 block mb-0.5">Date of Birth</strong> ${dob}</div>
-                <div><strong class="text-slate-400 block mb-0.5">Religious Degree</strong> ${degree}</div>
-            </div>
-        </div>
-    `;
-}
-        // Login Modal Controls
         function openLoginModal() { document.getElementById('loginModal').classList.remove('hidden'); }
         function closeLoginModal() { document.getElementById('loginModal').classList.add('hidden'); }
 
@@ -638,18 +600,18 @@ function searchMyProfile() {
         function openEditModal(row) {
             document.getElementById('modalTitle').innerText = 'Edit Member';
             document.getElementById('formId').value = row.id;
-            document.getElementById('formMembershipNo').value = row.membership_number || row.membership_no || '';
-            document.getElementById('formFullName').value = row.name || row.full_name || '';
-            document.getElementById('formAddress').value = row.address || '';
-            document.getElementById('formPanchayath').value = row.panchayath_municipality || row.place || '';
-            document.getElementById('formTaluk').value = row.taluk || '';
-            document.getElementById('formDistrict').value = row.district || '';
-            document.getElementById('formBatch').value = row.batch || '';
-            document.getElementById('formMobile').value = row.mobile || row.mobile_number || '';
-            document.getElementById('formWhatsApp').value = row.whatsapp_number || '';
-            document.getElementById('formEmail').value = row.email || '';
-            document.getElementById('formDOB').value = row.date_of_birth || '';
-            document.getElementById('formReligiousDegree').value = row.religious_degree || '';
+            document.getElementById('formMembershipNo').value = row['MEMBERSHIP NUMBER'] || row.membership_number || row.membership_no || '';
+            document.getElementById('formFullName').value = row['NAME'] || row.name || row.full_name || '';
+            document.getElementById('formAddress').value = row['ADDRESS'] || row.address || '';
+            document.getElementById('formPanchayath').value = row['PANCHAYATH/MUNICIPALITY'] || row.panchayath_municipality || row.place || '';
+            document.getElementById('formTaluk').value = row['TALUK'] || row.taluk || '';
+            document.getElementById('formDistrict').value = row['DISTRICT'] || row.district || '';
+            document.getElementById('formBatch').value = row['BATCH'] || row.batch || '';
+            document.getElementById('formMobile').value = row['MOBILE'] || row.mobile || row.mobile_number || '';
+            document.getElementById('formWhatsApp').value = row['Whatsapp number'] || row.whatsapp_number || '';
+            document.getElementById('formEmail').value = row['E-MAIL'] || row.email || '';
+            document.getElementById('formDOB').value = row['DATE OF BIRTH'] || row.date_of_birth || '';
+            document.getElementById('formReligiousDegree').value = row['RELIGIOUS DEGREE'] || row.religious_degree || '';
             document.getElementById('alumniModal').classList.remove('hidden');
         }
 
@@ -659,18 +621,18 @@ function searchMyProfile() {
             e.preventDefault();
             const id = document.getElementById('formId').value;
             const payload = {
-                membership_number: document.getElementById('formMembershipNo').value,
-                name: document.getElementById('formFullName').value,
-                address: document.getElementById('formAddress').value,
-                panchayath_municipality: document.getElementById('formPanchayath').value,
-                taluk: document.getElementById('formTaluk').value,
-                district: document.getElementById('formDistrict').value,
-                batch: document.getElementById('formBatch').value,
-                mobile: document.getElementById('formMobile').value,
-                whatsapp_number: document.getElementById('formWhatsApp').value,
-                email: document.getElementById('formEmail').value,
-                date_of_birth: document.getElementById('formDOB').value,
-                religious_degree: document.getElementById('formReligiousDegree').value
+                "MEMBERSHIP NUMBER": document.getElementById('formMembershipNo').value,
+                "NAME": document.getElementById('formFullName').value,
+                "ADDRESS": document.getElementById('formAddress').value,
+                "PANCHAYATH/MUNICIPALITY": document.getElementById('formPanchayath').value,
+                "TALUK": document.getElementById('formTaluk').value,
+                "DISTRICT": document.getElementById('formDistrict').value,
+                "BATCH": document.getElementById('formBatch').value,
+                "MOBILE": document.getElementById('formMobile').value,
+                "Whatsapp number": document.getElementById('formWhatsApp').value,
+                "E-MAIL": document.getElementById('formEmail').value,
+                "DATE OF BIRTH": document.getElementById('formDOB').value,
+                "RELIGIOUS DEGREE": document.getElementById('formReligiousDegree').value
             };
 
             let response;
@@ -699,18 +661,18 @@ function searchMyProfile() {
             if (allAlumniData.length === 0) return alert('No data to export.');
             const headers = ["MEMBERSHIP NUMBER", "NAME", "ADDRESS", "E-MAIL", "MOBILE", "Whatsapp number", "BATCH", "RELIGIOUS DEGREE", "DATE OF BIRTH", "PANCHAYATH/MUNICIPALITY", "TALUK", "DISTRICT"];
             const rows = allAlumniData.map(r => [
-                `"${r.membership_number || r.membership_no || ''}"`,
-                `"${r.name || r.full_name || ''}"`,
-                `"${r.address || ''}"`,
-                `"${r.email || ''}"`,
-                `"${r.mobile || r.mobile_number || ''}"`,
-                `"${r.whatsapp_number || ''}"`,
-                `"${r.batch || ''}"`,
-                `"${r.religious_degree || ''}"`,
-                `"${r.date_of_birth || ''}"`,
-                `"${r.panchayath_municipality || r.place || ''}"`,
-                `"${r.taluk || ''}"`,
-                `"${r.district || ''}"`
+                `"${r['MEMBERSHIP NUMBER'] || ''}"`,
+                `"${r['NAME'] || ''}"`,
+                `"${r['ADDRESS'] || ''}"`,
+                `"${r['E-MAIL'] || ''}"`,
+                `"${r['MOBILE'] || ''}"`,
+                `"${r['Whatsapp number'] || ''}"`,
+                `"${r['BATCH'] || ''}"`,
+                `"${r['RELIGIOUS DEGREE'] || ''}"`,
+                `"${r['DATE OF BIRTH'] || ''}"`,
+                `"${r['PANCHAYATH/MUNICIPALITY'] || ''}"`,
+                `"${r['TALUK'] || ''}"`,
+                `"${r['DISTRICT'] || ''}"`
             ]);
             const csv = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
             const link = document.createElement("a");
