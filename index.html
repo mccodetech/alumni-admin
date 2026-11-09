@@ -13,105 +13,131 @@
 </head>
 <body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen flex flex-col">
 
-    <!-- Top Navigation Bar -->
-    <nav class="bg-gradient-to-r from-blue-950 via-indigo-900 to-blue-900 text-white shadow-md sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-xl text-blue-200">
-                    <i class="fa-solid fa-graduation-cap"></i>
+    <!-- Clean, Minimal Top Navigation Bar -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                
+                <!-- Logo & Brand -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center text-lg shadow-sm">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-tight">FAHM ALUMNI</h1>
+                        <p class="text-xs text-slate-500 font-medium leading-none">Official Community Portal</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="text-xl font-bold tracking-tight">FAHM ALUMNI</h1>
-                    <p class="text-xs text-blue-200">Official Community Portal</p>
+
+                <!-- Desktop Tab Switcher -->
+                <div class="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs sm:text-sm font-medium">
+                    <button onclick="switchTab('dashboard')" id="tabBtn-dashboard" class="tab-btn px-3.5 py-1.5 rounded-lg bg-white text-slate-900 font-bold shadow-sm transition">
+                        <i class="fa-solid fa-house mr-1.5 text-slate-500"></i> Home
+                    </button>
+                    <button onclick="switchTab('directory')" id="tabBtn-directory" class="tab-btn px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">
+                        <i class="fa-solid fa-users mr-1.5 text-slate-400"></i> Directory
+                    </button>
+                    <button onclick="switchTab('profile')" id="tabBtn-profile" class="tab-btn px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">
+                        <i class="fa-solid fa-id-card mr-1.5 text-slate-400"></i> Find Profile
+                    </button>
+                    <button onclick="switchTab('forms')" id="tabBtn-forms" class="tab-btn px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">
+                        <i class="fa-solid fa-link mr-1.5 text-slate-400"></i> Forms & Events
+                    </button>
                 </div>
-            </div>
 
-            <!-- Tab Switcher Navigation -->
-            <div class="flex items-center gap-1 sm:gap-2 bg-black/20 p-1 rounded-xl text-xs sm:text-sm font-medium">
-                <button onclick="switchTab('dashboard')" id="tabBtn-dashboard" class="tab-btn px-3 py-1.5 rounded-lg bg-white text-blue-950 font-bold shadow-sm transition">
-                    <i class="fa-solid fa-chart-pie mr-1 sm:mr-1.5"></i> Home
-                </button>
-                <button onclick="switchTab('directory')" id="tabBtn-directory" class="tab-btn px-3 py-1.5 rounded-lg text-blue-100 hover:text-white transition">
-                    <i class="fa-solid fa-users mr-1 sm:mr-1.5"></i> Directory
-                </button>
-                <button onclick="switchTab('profile')" id="tabBtn-profile" class="tab-btn px-3 py-1.5 rounded-lg text-blue-100 hover:text-white transition">
-                    <i class="fa-solid fa-id-card mr-1 sm:mr-1.5"></i> Find Profile
-                </button>
-                <button onclick="switchTab('forms')" id="tabBtn-forms" class="tab-btn px-3 py-1.5 rounded-lg text-blue-100 hover:text-white transition">
-                    <i class="fa-solid fa-link mr-1 sm:mr-1.5"></i> Forms & Events
-                </button>
-            </div>
-
-            <!-- Login / Admin Buttons -->
-            <div class="flex items-center gap-2">
-                <button id="showLoginModalBtn" onclick="openLoginModal()" class="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-semibold rounded-xl transition border border-white/20 flex items-center gap-1.5">
-                    <i class="fa-solid fa-lock text-xs"></i> Admin
-                </button>
-
-                <div id="adminActions" class="hidden flex items-center gap-2">
-                    <button onclick="openAddModal()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-xl transition shadow flex items-center gap-1">
-                        <i class="fa-solid fa-plus"></i> Add
+                <!-- Actions: Admin & Mobile Hamburger Toggle -->
+                <div class="flex items-center gap-2">
+                    <button id="showLoginModalBtn" onclick="openLoginModal()" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold rounded-xl transition border border-slate-200 flex items-center gap-1.5">
+                        <i class="fa-solid fa-lock text-xs text-slate-500"></i> Admin
                     </button>
-                    <button onclick="exportToCSV()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition shadow flex items-center gap-1">
-                        <i class="fa-solid fa-file-excel"></i> Export
-                    </button>
-                    <button onclick="logoutAdmin()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl transition shadow flex items-center gap-1">
-                        <i class="fa-solid fa-right-from-bracket"></i>
+
+                    <div id="adminActions" class="hidden flex items-center gap-1.5">
+                        <button onclick="openAddModal()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-xl transition shadow flex items-center gap-1">
+                            <i class="fa-solid fa-plus"></i> Add
+                        </button>
+                        <button onclick="exportToCSV()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition shadow flex items-center gap-1">
+                            <i class="fa-solid fa-file-excel"></i> Export
+                        </button>
+                        <button onclick="logoutAdmin()" class="px-3 py-1.5 bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 text-xs font-semibold rounded-xl transition flex items-center gap-1" title="Logout">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                        </button>
+                    </div>
+
+                    <!-- Mobile Toggle Button -->
+                    <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-slate-600 hover:text-slate-900 rounded-lg focus:outline-none ml-1">
+                        <i class="fa-solid fa-bars text-xl" id="menuIcon"></i>
                     </button>
                 </div>
             </div>
         </div>
+
+        <!-- Mobile Drawer Menu -->
+        <div id="mobileMenu" class="hidden md:hidden border-t border-slate-100 bg-white px-4 pt-2 pb-4 space-y-1">
+            <button onclick="switchTabMobile('dashboard')" class="w-full text-left px-3 py-2.5 rounded-lg font-medium text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                <i class="fa-solid fa-house text-slate-400 w-4"></i> Home
+            </button>
+            <button onclick="switchTabMobile('directory')" class="w-full text-left px-3 py-2.5 rounded-lg font-medium text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                <i class="fa-solid fa-users text-slate-400 w-4"></i> Directory
+            </button>
+            <button onclick="switchTabMobile('profile')" class="w-full text-left px-3 py-2.5 rounded-lg font-medium text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                <i class="fa-solid fa-id-card text-slate-400 w-4"></i> Find Profile
+            </button>
+            <button onclick="switchTabMobile('forms')" class="w-full text-left px-3 py-2.5 rounded-lg font-medium text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                <i class="fa-solid fa-link text-slate-400 w-4"></i> Forms & Events
+            </button>
+        </div>
     </nav>
 
     <!-- Main Content Area -->
-    <main class="max-w-7xl mx-auto p-4 sm:p-6 md:p-8 flex-1 w-full">
+    <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 flex-1 w-full">
 
         <!-- 1. DASHBOARD TAB -->
         <section id="tab-dashboard" class="tab-content space-y-6">
-            <!-- Welcome Banner -->
-            <div class="bg-gradient-to-r from-blue-900 to-indigo-800 rounded-3xl p-6 sm:p-8 text-white shadow-lg relative overflow-hidden">
+            <!-- Modern Subtle Hero Card -->
+            <div class="bg-slate-900 rounded-3xl p-6 sm:p-10 text-white shadow-sm relative overflow-hidden border border-slate-800">
                 <div class="relative z-10 max-w-2xl">
-                    <h2 class="text-2xl sm:text-3xl font-extrabold mb-2">Welcome to FAHM Alumni Portal</h2>
-                    <p class="text-blue-100 text-sm leading-relaxed mb-6">Connect with fellow graduates, explore member directory, look up profiles, and stay updated with official events and registration links.</p>
+                    <span class="inline-block text-xs uppercase tracking-wider font-semibold text-slate-400 bg-slate-800 px-3 py-1 rounded-full mb-3">Community Portal</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">Welcome to FAHM Alumni Portal</h2>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6 font-normal">Connect with fellow graduates, explore the member directory, look up profiles, and stay updated with official events and notices.</p>
                     <div class="flex flex-wrap gap-3">
-                        <button onclick="switchTab('directory')" class="px-5 py-2.5 bg-white text-blue-900 hover:bg-blue-50 font-bold rounded-xl text-sm shadow transition flex items-center gap-2">
-                            <i class="fa-solid fa-address-book"></i> Browse Directory
+                        <button onclick="switchTab('directory')" class="px-5 py-2.5 bg-white text-slate-900 hover:bg-slate-100 font-semibold rounded-xl text-sm shadow-sm transition flex items-center gap-2">
+                            <i class="fa-solid fa-address-book text-slate-600"></i> Browse Directory
                         </button>
-                        <button onclick="switchTab('profile')" class="px-5 py-2.5 bg-blue-800 hover:bg-blue-700 text-white font-semibold rounded-xl text-sm transition border border-blue-400/30 flex items-center gap-2">
-                            <i class="fa-solid fa-magnifying-glass"></i> Search My Details
+                        <button onclick="switchTab('profile')" class="px-5 py-2.5 bg-slate-800 text-white hover:bg-slate-700 font-semibold rounded-xl text-sm transition border border-slate-700 flex items-center gap-2">
+                            <i class="fa-solid fa-magnifying-glass text-slate-400"></i> Search My Details
                         </button>
                     </div>
                 </div>
-                <i class="fa-solid fa-graduation-cap absolute -right-6 -bottom-8 text-9xl text-white/10 pointer-events-none"></i>
+                <i class="fa-solid fa-graduation-cap absolute -right-6 -bottom-8 text-9xl text-white/5 pointer-events-none"></i>
             </div>
 
             <!-- Stats Overview Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-800 flex items-center justify-center text-xl">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center text-xl shrink-0">
                         <i class="fa-solid fa-users"></i>
                     </div>
                     <div>
                         <div class="text-xs text-slate-500 font-medium">Total Registered Alumni</div>
-                        <div id="statTotal" class="text-2xl font-bold text-slate-800">0</div>
+                        <div id="statTotal" class="text-2xl font-bold text-slate-900">0</div>
                     </div>
                 </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-800 flex items-center justify-center text-xl">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center text-xl shrink-0">
                         <i class="fa-solid fa-graduation-cap"></i>
                     </div>
                     <div>
                         <div class="text-xs text-slate-500 font-medium">Active Batches</div>
-                        <div id="statBatches" class="text-2xl font-bold text-slate-800">0</div>
+                        <div id="statBatches" class="text-2xl font-bold text-slate-900">0</div>
                     </div>
                 </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center text-xl">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center text-xl shrink-0">
                         <i class="fa-solid fa-location-dot"></i>
                     </div>
                     <div>
                         <div class="text-xs text-slate-500 font-medium">Districts Represented</div>
-                        <div id="statDistricts" class="text-2xl font-bold text-slate-800">0</div>
+                        <div id="statDistricts" class="text-2xl font-bold text-slate-900">0</div>
                     </div>
                 </div>
             </div>
@@ -120,14 +146,14 @@
         <!-- 2. DIRECTORY TAB -->
         <section id="tab-directory" class="tab-content hidden space-y-6">
             <!-- Search & Filter Controls -->
-            <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-100 flex flex-col md:flex-row gap-3 justify-between items-center">
+            <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-200/80 flex flex-col md:flex-row gap-3 justify-between items-center">
                 <div class="w-full md:w-1/2 relative">
                     <i class="fa-solid fa-search absolute left-4 top-3.5 text-slate-400"></i>
-                    <input type="text" id="searchInput" onkeyup="filterDirectory()" placeholder="Search by name, place, membership no, job..." class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
+                    <input type="text" id="searchInput" onkeyup="filterDirectory()" placeholder="Search by name, place, membership no..." class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-800 text-sm">
                 </div>
                 <div class="w-full md:w-1/2 flex gap-3">
-                    <input type="text" id="filterBatch" onkeyup="filterDirectory()" placeholder="Filter Batch (eg: D2)" class="w-1/2 px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
-                    <input type="text" id="filterPlace" onkeyup="filterDirectory()" placeholder="Filter Place" class="w-1/2 px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
+                    <input type="text" id="filterBatch" onkeyup="filterDirectory()" placeholder="Filter Batch" class="w-1/2 px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-800 text-sm">
+                    <input type="text" id="filterPlace" onkeyup="filterDirectory()" placeholder="Filter Place" class="w-1/2 px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-800 text-sm">
                 </div>
             </div>
 
@@ -137,22 +163,21 @@
 
         <!-- 3. FIND PROFILE TAB -->
         <section id="tab-profile" class="tab-content hidden max-w-2xl mx-auto space-y-6">
-            <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-100 text-center">
-                <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-900 flex items-center justify-center text-2xl mx-auto mb-3">
+            <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200/80 text-center">
+                <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-800 flex items-center justify-center text-2xl mx-auto mb-3">
                     <i class="fa-solid fa-address-card"></i>
                 </div>
                 <h3 class="text-xl font-bold text-slate-800">Find My Alumni Profile</h3>
-                <p class="text-xs text-slate-500 mt-1 mb-6">Enter your Mobile Number or FAHM Membership No to look up your complete records.</p>
+                <p class="text-xs text-slate-500 mt-1 mb-6">Enter your Mobile Number or Membership No to view records.</p>
                 
-                <div class="flex gap-2 max-w-md mx-auto">
-                    <input type="text" id="profileSearchInput" placeholder="Mobile / Membership No" class="flex-1 px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm">
-                    <button onclick="searchMyProfile()" class="px-5 py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-semibold rounded-xl text-sm transition">
+                <div class="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
+                    <input type="text" id="profileSearchInput" placeholder="Mobile / Membership No" class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-800 text-sm">
+                    <button onclick="searchMyProfile()" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl text-sm transition">
                         Search
                     </button>
                 </div>
             </div>
 
-            <!-- Single Profile Result Display -->
             <div id="profileResultCard" class="hidden"></div>
         </section>
 
@@ -161,37 +186,32 @@
             <div class="flex justify-between items-center">
                 <div>
                     <h3 class="text-lg font-bold text-slate-800">Forms & Event Registrations</h3>
-                    <p class="text-xs text-slate-500">Access ongoing programs, event registrations, and community submission links</p>
+                    <p class="text-xs text-slate-500">Access ongoing programs and official forms</p>
                 </div>
-                <button id="addFormLinkBtn" onclick="openAddLinkForm()" class="hidden px-4 py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-xl text-xs font-semibold shadow transition items-center gap-1.5">
-                    <i class="fa-solid fa-plus"></i> Add Event Link
-                </button>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="formsListContainer">
-                <!-- Sample Form Card 1 -->
-                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
                     <div>
-                        <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-lg text-[11px] uppercase tracking-wider">Active</span>
+                        <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md text-[11px] uppercase tracking-wider">Active</span>
                         <h4 class="text-base font-bold text-slate-800 mt-2.5">Annual Alumni Meet Registration</h4>
-                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">Register your attendance and family details for the upcoming annual meet.</p>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">Register your attendance for the upcoming annual meet.</p>
                     </div>
                     <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between">
                         <span class="text-xs text-slate-400"><i class="fa-regular fa-calendar mr-1"></i> Upcoming</span>
-                        <a href="meet-register.html" class="px-3.5 py-1.5 bg-blue-900 hover:bg-blue-800 text-white rounded-lg text-xs font-semibold transition">Open Form</a>
+                        <a href="meet-register.html" class="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold transition">Open Form</a>
                     </div>
                 </div>
 
-                <!-- Sample Form Card 2 -->
-                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
                     <div>
-                        <span class="px-2.5 py-1 bg-blue-50 text-blue-700 font-semibold rounded-lg text-[11px] uppercase tracking-wider">Registration</span>
+                        <span class="px-2.5 py-1 bg-slate-100 text-slate-700 font-semibold rounded-md text-[11px] uppercase tracking-wider">Registration</span>
                         <h4 class="text-base font-bold text-slate-800 mt-2.5">New Member Registration</h4>
                         <p class="text-xs text-slate-500 mt-1 leading-relaxed">Submit personal and academic details to register in FAHM database.</p>
                     </div>
                     <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between">
                         <span class="text-xs text-slate-400"><i class="fa-solid fa-link mr-1"></i> Public Form</span>
-                        <a href="register.html" class="px-3.5 py-1.5 bg-blue-900 hover:bg-blue-800 text-white rounded-lg text-xs font-semibold transition">Register Now</a>
+                        <a href="register.html" class="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold transition">Register Now</a>
                     </div>
                 </div>
             </div>
@@ -200,28 +220,28 @@
     </main>
 
     <!-- Modal for Admin Login -->
-    <div id="loginModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 max-w-sm w-full border border-slate-100 relative">
+    <div id="loginModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 max-w-sm w-full border border-slate-100 relative">
             <button onclick="closeLoginModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
             <div class="text-center mb-5">
-                <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-900 mb-2">
+                <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 text-slate-800 mb-2">
                     <i class="fa-solid fa-user-shield text-xl"></i>
                 </div>
-                <h3 class="text-lg font-bold text-blue-900">Admin Login</h3>
-                <p class="text-xs text-slate-500">Sign in to edit, add, or manage alumni</p>
+                <h3 class="text-lg font-bold text-slate-900">Admin Login</h3>
+                <p class="text-xs text-slate-500">Sign in to manage alumni records</p>
             </div>
             <form id="adminLoginForm" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold mb-1 text-slate-700">Admin Email</label>
-                    <input type="email" id="modalAdminEmail" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm" placeholder="admin@example.com">
+                    <input type="email" id="modalAdminEmail" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-800 text-sm" placeholder="admin@example.com">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold mb-1 text-slate-700">Password</label>
-                    <input type="password" id="modalAdminPassword" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 text-sm" placeholder="Password">
+                    <input type="password" id="modalAdminPassword" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-800 text-sm" placeholder="Password">
                 </div>
-                <button type="submit" id="loginModalBtn" class="w-full py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-semibold rounded-xl text-sm transition shadow-md">
+                <button type="submit" id="loginModalBtn" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl text-sm transition shadow-sm">
                     Sign In
                 </button>
             </form>
@@ -229,10 +249,10 @@
     </div>
 
     <!-- Modal for Add / Edit Alumni (Admin Only) -->
-    <div id="alumniModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-        <div class="bg-white rounded-2xl p-6 max-w-xl w-full shadow-2xl my-8">
+    <div id="alumniModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+        <div class="bg-white rounded-2xl p-6 max-w-xl w-full shadow-xl my-8">
             <div class="flex justify-between items-center mb-4">
-                <h3 id="modalTitle" class="text-lg font-bold text-blue-900">Alumni Details</h3>
+                <h3 id="modalTitle" class="text-lg font-bold text-slate-900">Alumni Details</h3>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <form id="alumniForm" class="space-y-3">
@@ -240,71 +260,72 @@
                 
                 <div>
                     <label class="block text-xs font-semibold mb-1 text-slate-600">Full Name *</label>
-                    <input type="text" id="formFullName" required class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                    <input type="text" id="formFullName" required class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none focus:ring-2 focus:ring-slate-800">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-semibold mb-1 text-slate-600">Place</label>
-                        <input type="text" id="formPlace" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                        <input type="text" id="formPlace" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none focus:ring-2 focus:ring-slate-800">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold mb-1 text-slate-600">Batch *</label>
-                        <input type="text" id="formBatch" required class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                        <input type="text" id="formBatch" required class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none focus:ring-2 focus:ring-slate-800">
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold mb-1 text-slate-600">Address</label>
-                    <textarea id="formAddress" rows="2" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none"></textarea>
+                    <textarea id="formAddress" rows="2" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none focus:ring-2 focus:ring-slate-800"></textarea>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-semibold mb-1 text-slate-600">Mobile Number *</label>
-                        <input type="text" id="formMobile" required class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                        <input type="text" id="formMobile" required class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none focus:ring-2 focus:ring-slate-800">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold mb-1 text-slate-600">WhatsApp Number</label>
-                        <input type="text" id="formWhatsApp" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                        <input type="text" id="formWhatsApp" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none focus:ring-2 focus:ring-slate-800">
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold mb-1 text-slate-600">Gmail / Email</label>
-                    <input type="email" id="formEmail" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                    <input type="email" id="formEmail" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none focus:ring-2 focus:ring-slate-800">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-semibold mb-1 text-slate-600">Religious Degree</label>
-                        <input type="text" id="formReligiousDegree" placeholder="eg. Faizy / Hudawi" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                        <input type="text" id="formReligiousDegree" placeholder="eg. Faizy / Hudawi" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none focus:ring-2 focus:ring-slate-800">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold mb-1 text-slate-600">General Education</label>
-                        <input type="text" id="formGeneralEdu" placeholder="eg. BA, B.Com, MA" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                        <input type="text" id="formGeneralEdu" placeholder="eg. BA, B.Com, MA" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none focus:ring-2 focus:ring-slate-800">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-semibold mb-1 text-slate-600">Current Job</label>
-                        <input type="text" id="formJob" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                        <input type="text" id="formJob" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none focus:ring-2 focus:ring-slate-800">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold mb-1 text-slate-600">FAHM Membership No</label>
-                        <input type="text" id="formMembershipNo" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none">
+                        <input type="text" id="formMembershipNo" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm outline-none focus:ring-2 focus:ring-slate-800">
                     </div>
                 </div>
 
-                <div class="flex justify-end gap-2 pt-4 border-t">
+                <div class="flex justify-end gap-2 pt-4 border-t border-slate-100">
                     <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-semibold transition">Cancel</button>
-                    <button type="submit" class="px-5 py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-xl text-sm font-semibold transition">Save Record</button>
+                    <button type="submit" class="px-5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-sm font-semibold transition">Save Record</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- Interactive Logic -->
     <script>
         const SUPABASE_URL = 'https://fpirwwpjlpkhrydpovrd.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwaXJ3d3BqbHBraHJ5ZHBvdnJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzMjcxNjgsImV4cCI6MjEwODkwMzE2OH0.dAW_xrzwbdZ4sxugVXdGqTYKzvym1sR4xav373LY8QY';
@@ -328,34 +349,48 @@
             loadAlumniData();
         });
 
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const icon = document.getElementById('menuIcon');
+            menu.classList.toggle('hidden');
+            if (menu.classList.contains('hidden')) {
+                icon.className = "fa-solid fa-bars text-xl";
+            } else {
+                icon.className = "fa-solid fa-xmark text-xl";
+            }
+        }
+
+        function switchTabMobile(tabName) {
+            switchTab(tabName);
+            toggleMobileMenu();
+        }
+
         // Tab Switching Logic
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.className = "tab-btn px-3 py-1.5 rounded-lg text-blue-100 hover:text-white transition";
+                btn.className = "tab-btn px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition";
             });
 
             document.getElementById(`tab-${tabName}`).classList.remove('hidden');
             const activeBtn = document.getElementById(`tabBtn-${tabName}`);
-            activeBtn.className = "tab-btn px-3 py-1.5 rounded-lg bg-white text-blue-950 font-bold shadow-sm transition";
+            if (activeBtn) {
+                activeBtn.className = "tab-btn px-3.5 py-1.5 rounded-lg bg-white text-slate-900 font-bold shadow-sm transition";
+            }
         }
 
         function setAdminState(isAdmin) {
             isAdminLoggedIn = isAdmin;
             const loginBtn = document.getElementById('showLoginModalBtn');
             const adminActions = document.getElementById('adminActions');
-            const addFormLinkBtn = document.getElementById('addFormLinkBtn');
 
             if (isAdmin) {
                 loginBtn.classList.add('hidden');
                 adminActions.classList.remove('hidden');
-                addFormLinkBtn.classList.remove('hidden');
-                addFormLinkBtn.classList.add('inline-flex');
             } else {
                 loginBtn.classList.remove('hidden');
                 adminActions.classList.add('hidden');
-                addFormLinkBtn.classList.add('hidden');
-                addFormLinkBtn.classList.remove('inline-flex');
             }
         }
 
@@ -383,7 +418,6 @@
             document.getElementById('statDistricts').innerText = districts.size;
         }
 
-        // Render Cards in Directory
         function displayDirectory(data) {
             const container = document.getElementById('directoryContainer');
             container.innerHTML = '';
@@ -398,13 +432,13 @@
                 const waPhone = cleanNumber(row.whatsapp_number || row.mobile_number);
 
                 const card = document.createElement('div');
-                card.className = "bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between hover:shadow-md transition";
+                card.className = "bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between hover:shadow-md transition";
                 card.innerHTML = `
                     <div>
                         <div class="flex justify-between items-start mb-2">
                             <div>
-                                <h4 class="font-bold text-slate-800 text-base leading-tight">${row.full_name || '-'}</h4>
-                                <span class="text-[11px] text-blue-900 font-semibold bg-blue-50 px-2 py-0.5 rounded-md mt-1 inline-block">Memb. No: ${row.membership_no || 'N/A'}</span>
+                                <h4 class="font-bold text-slate-900 text-base leading-tight">${row.full_name || '-'}</h4>
+                                <span class="text-[11px] text-slate-600 font-medium bg-slate-100 px-2 py-0.5 rounded-md mt-1 inline-block">Memb. No: ${row.membership_no || 'N/A'}</span>
                             </div>
                             <span class="px-2.5 py-1 bg-slate-100 text-slate-700 font-semibold rounded-lg text-xs">${row.batch || '-'}</span>
                         </div>
@@ -419,8 +453,8 @@
                     <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 mt-2">
                         <div class="flex gap-2">
                             ${callPhone ? `
-                                <a href="tel:+${callPhone}" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-800 rounded-lg text-xs font-semibold transition flex items-center gap-1.5">
-                                    <i class="fa-solid fa-phone"></i> Call
+                                <a href="tel:+${callPhone}" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-xs font-semibold transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-phone text-slate-500"></i> Call
                                 </a>
                             ` : ''}
                             ${waPhone ? `
@@ -432,8 +466,8 @@
 
                         ${isAdminLoggedIn ? `
                             <div class="flex gap-1">
-                                <button onclick='openEditModal(${JSON.stringify(row)})' class="p-2 text-blue-700 bg-blue-50 rounded-lg text-xs"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button onclick='deleteAlumni("${row.id}")' class="p-2 text-rose-700 bg-rose-50 rounded-lg text-xs"><i class="fa-solid fa-trash-can"></i></button>
+                                <button onclick='openEditModal(${JSON.stringify(row)})' class="p-2 text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick='deleteAlumni("${row.id}")' class="p-2 text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg text-xs"><i class="fa-solid fa-trash-can"></i></button>
                             </div>
                         ` : ''}
                     </div>
@@ -460,7 +494,6 @@
             displayDirectory(filtered);
         }
 
-        // Single Profile Look up
         function searchMyProfile() {
             const query = document.getElementById('profileSearchInput').value.trim().toLowerCase();
             const resultCard = document.getElementById('profileResultCard');
@@ -491,15 +524,15 @@
             const waPhone = cleanNumber(match.whatsapp_number || match.mobile_number);
 
             resultCard.innerHTML = `
-                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-100">
-                    <div class="flex justify-between items-start pb-4 border-b">
+                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                    <div class="flex justify-between items-start pb-4 border-b border-slate-100">
                         <div>
-                            <span class="text-xs font-bold text-blue-900 bg-blue-50 px-2.5 py-1 rounded-lg">Memb. No: ${match.membership_no || 'N/A'}</span>
-                            <h3 class="text-xl font-bold text-slate-800 mt-2">${match.full_name || '-'}</h3>
+                            <span class="text-xs font-semibold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg">Memb. No: ${match.membership_no || 'N/A'}</span>
+                            <h3 class="text-xl font-bold text-slate-900 mt-2">${match.full_name || '-'}</h3>
                             <p class="text-xs text-slate-500">${match.place || '-'} • Batch ${match.batch || '-'}</p>
                         </div>
                         <div class="flex gap-2">
-                            ${callPhone ? `<a href="tel:+${callPhone}" class="p-2.5 bg-blue-50 text-blue-700 rounded-xl text-sm"><i class="fa-solid fa-phone"></i></a>` : ''}
+                            ${callPhone ? `<a href="tel:+${callPhone}" class="p-2.5 bg-slate-100 text-slate-700 rounded-xl text-sm"><i class="fa-solid fa-phone"></i></a>` : ''}
                             ${waPhone ? `<a href="https://wa.me/${waPhone}" target="_blank" class="p-2.5 bg-emerald-50 text-emerald-700 rounded-xl text-sm"><i class="fa-brands fa-whatsapp text-lg"></i></a>` : ''}
                         </div>
                     </div>
@@ -518,7 +551,6 @@
             `;
         }
 
-        // Admin Auth
         function openLoginModal() { document.getElementById('loginModal').classList.remove('hidden'); }
         function closeLoginModal() { document.getElementById('loginModal').classList.add('hidden'); }
 
@@ -550,7 +582,6 @@
             displayDirectory(allAlumniData);
         }
 
-        // Add / Edit Modal Controls
         function openAddModal() {
             document.getElementById('modalTitle').innerText = 'Add Alumni Member';
             document.getElementById('formId').value = '';
