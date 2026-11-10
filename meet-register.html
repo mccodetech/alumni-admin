@@ -48,6 +48,8 @@
         <!-- Form Step (Visible After Verification) -->
         <form id="summitForm" class="hidden mt-6 space-y-3.5 border-t-2 border-slate-200 pt-4 text-xs font-medium">
             <input type="hidden" id="regMembNo">
+            <input type="hidden" id="regFullName">
+            <input type="hidden" id="regBatchVal">
             
             <div class="bg-blue-50 border border-blue-200 p-3">
                 <div class="text-[11px] text-slate-500 font-bold">അംഗത്തിന്റെ പേര്:</div>
@@ -118,7 +120,6 @@
                 return;
             }
 
-            // ഷീറ്റിലെ ഏത് കോളം ഫോർമാറ്റും പരിശോധിക്കുന്നു
             const match = data.find(r => {
                 const memb = (r['MEMBERSHIP NUMBER'] || r.membership_number || r.membership_no || '').toString().toLowerCase().trim();
                 const mob = (r['MOBILE'] || r.mobile || r.mobile_number || '').toString().toLowerCase().trim();
@@ -141,18 +142,40 @@
                 document.getElementById('verifiedName').innerText = name;
                 document.getElementById('verifiedBatch').innerText = 'Batch: ' + batch;
                 document.getElementById('regMembNo').value = membNo;
+                document.getElementById('regFullName').value = name;
+                document.getElementById('regBatchVal').value = batch;
                 document.getElementById('regMobile').value = mobile;
             }
         }
 
+        // Form Submit Handler (Saves directly to Supabase event_registrations)
         document.getElementById('summitForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             btn.disabled = true;
             btn.innerText = 'സേവ് ചെയ്യുന്നു...';
 
-            alert('FAHM ALUMNI SUMMIT\'26 ഡെലിഗേറ്റ് രജിസ്ട്രേഷൻ വിജയകരമായി പൂർത്തിയായി!');
-            window.location.href = 'index.html';
+            const payload = {
+                membership_no: document.getElementById('regMembNo').value,
+                full_name: document.getElementById('regFullName').value,
+                batch: document.getElementById('regBatchVal').value,
+                mobile: document.getElementById('regMobile').value,
+                attendees_count: document.getElementById('regAttendees').value,
+                food_preference: document.getElementById('regFood').value
+            };
+
+            const { data, error } = await _supabase
+                .from('event_registrations')
+                .insert([payload]);
+
+            if (error) {
+                alert('രജിസ്ട്രേഷൻ സേവ് ചെയ്യാൻ സാധിച്ചില്ല: ' + error.message);
+                btn.disabled = false;
+                btn.innerText = 'രജിസ്ട്രേഷൻ പൂർത്തിയാക്കുക';
+            } else {
+                alert('FAHM ALUMNI SUMMIT\'26 ഡെലിഗേറ്റ് രജിസ്ട്രേഷൻ വിജയകരമായി പൂർത്തിയായി!');
+                window.location.href = 'index.html';
+            }
         });
     </script>
 </body>
