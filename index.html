@@ -10,26 +10,28 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- PWA Settings (For App Installation) -->
+    <meta name="theme-color" content="#1e3a8a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiRkFITSBBbHVtbmkiLCJzaG9ydF9uYW1lIjoiRkFITSIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIgLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y4ZmFmYyJ9">
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-        html, body {
-            max-width: 100%;
-            overflow-x: hidden;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        html, body { max-width: 100%; overflow-x: hidden; }
     </style>
 </head>
 <body class="bg-gradient-to-br from-slate-100 via-blue-50/50 to-indigo-50/40 font-sans text-slate-800 antialiased min-h-screen flex flex-col pb-20 md:pb-8">
 
     <!-- Top Premium Navbar -->
     <header class="bg-white/90 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-40 shadow-xs">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16 sm:h-18 gap-3">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16 sm:h-18 gap-2">
                 
                 <!-- Logo & Brand Info -->
-                <div class="flex items-center gap-3 min-w-0">
+                <div class="flex items-center gap-2.5 min-w-0">
                     <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-blue-900 to-indigo-800 p-0.5 shadow-sm shrink-0 flex items-center justify-center">
                         <img src="logo.png" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-graduation-cap text-white text-lg\'></i>'" alt="FAHM Logo" class="h-full w-full object-contain rounded-lg p-1 bg-white">
                     </div>
@@ -40,7 +42,7 @@
                 </div>
 
                 <!-- Desktop Navigation Links -->
-                <nav class="hidden md:flex items-center gap-1.5 bg-slate-100/90 p-1.5 rounded-xl border border-slate-200/80 text-xs font-bold">
+                <nav class="hidden lg:flex items-center gap-1.5 bg-slate-100/90 p-1.5 rounded-xl border border-slate-200/80 text-xs font-bold">
                     <button onclick="switchTab('dashboard')" id="tabBtn-dashboard" class="tab-btn px-4 py-2 rounded-lg bg-white text-blue-950 shadow-xs transition">
                         <i class="fa-solid fa-house mr-1.5 text-blue-700"></i> Home
                     </button>
@@ -58,20 +60,27 @@
                     </button>
                 </nav>
 
-                <!-- Admin Action Buttons -->
-                <div class="flex items-center gap-2 shrink-0">
-                    <button id="showLoginModalBtn" onclick="openLoginModal()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition border border-slate-200 flex items-center gap-1.5 shadow-2xs">
+                <!-- Actions: Install App + Admin Actions -->
+                <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                    
+                    <!-- Install App Button -->
+                    <button onclick="triggerAppInstall()" id="installAppBtn" class="px-3 py-1.5 sm:py-2 bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white text-xs font-extrabold rounded-xl transition shadow-xs flex items-center gap-1.5 border border-blue-600">
+                        <i class="fa-solid fa-download text-[11px]"></i>
+                        <span>Install App</span>
+                    </button>
+
+                    <button id="showLoginModalBtn" onclick="openLoginModal()" class="px-3 py-1.5 sm:py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition border border-slate-200 flex items-center gap-1.5 shadow-2xs">
                         <i class="fa-solid fa-lock text-[11px] text-slate-500"></i> <span>Admin</span>
                     </button>
 
                     <div id="adminActions" class="hidden flex items-center gap-1.5">
-                        <button onclick="openAddModal()" class="px-3 py-2 bg-blue-900 hover:bg-blue-800 text-white text-xs font-bold rounded-xl transition shadow-xs flex items-center gap-1.5">
-                            <i class="fa-solid fa-user-plus text-[11px]"></i> <span class="hidden sm:inline">Add Member</span>
+                        <button onclick="openAddModal()" class="px-3 py-1.5 sm:py-2 bg-blue-900 hover:bg-blue-800 text-white text-xs font-bold rounded-xl transition shadow-xs flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-plus text-[11px]"></i> <span class="hidden sm:inline">Add</span>
                         </button>
-                        <button onclick="exportToCSV()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition shadow-xs flex items-center gap-1.5" title="Export Alumni Directory CSV">
+                        <button onclick="exportToCSV()" class="px-3 py-1.5 sm:py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition shadow-xs flex items-center gap-1.5" title="Export Alumni Directory CSV">
                             <i class="fa-solid fa-file-excel"></i> <span class="hidden md:inline">Export</span>
                         </button>
-                        <button onclick="logoutAdmin()" class="px-2.5 py-2 bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 text-xs font-bold rounded-xl transition" title="Logout">
+                        <button onclick="logoutAdmin()" class="px-2.5 py-1.5 sm:py-2 bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 text-xs font-bold rounded-xl transition" title="Logout">
                             <i class="fa-solid fa-right-from-bracket"></i>
                         </button>
                     </div>
@@ -217,14 +226,12 @@
                                 <th class="p-3.5">Name</th>
                                 <th class="p-3.5">Batch</th>
                                 <th class="p-3.5">Mobile</th>
-                                <th class="p-3.5">Attendees</th>
-                                <th class="p-3.5">Food Preference</th>
                                 <th class="p-3.5">Registered At</th>
                             </tr>
                         </thead>
                         <tbody id="summitTableBody" class="divide-y divide-slate-100 font-medium">
                             <tr>
-                                <td colspan="8" class="p-6 text-center text-slate-400">Loading registrations...</td>
+                                <td colspan="6" class="p-6 text-center text-slate-400">Loading registrations...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -234,7 +241,7 @@
 
     </main>
 
-    <!-- Mobile Bottom Navigation Bar (App Bar Style) -->
+    <!-- Mobile Bottom Navigation Bar -->
     <div class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200/80 md:hidden z-40 py-2 px-3 flex justify-around items-center shadow-lg">
         <button onclick="switchTab('dashboard')" id="mobNav-dashboard" class="mob-nav-btn flex flex-col items-center text-blue-900 font-extrabold text-[10px] transition">
             <i class="fa-solid fa-house text-lg mb-0.5"></i> Home
@@ -363,6 +370,28 @@
         let allAlumniData = [];
         let allSummitRegistrations = [];
         let isAdminLoggedIn = false;
+        let deferredPrompt;
+
+        // PWA Install Event Listener
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        function triggerAppInstall() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User installed FAHM app');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                // Friendly guide if already installed or on iOS Safari
+                alert("To install FAHM Alumni App:\n\n• Android: Tap the 3 dots on your browser menu -> Tap 'Install app' or 'Add to Home screen'\n\n• iPhone / iPad: Tap the Share button -> Tap 'Add to Home Screen'");
+            }
+        }
 
         function cleanNumber(num) {
             if (!num) return '';
@@ -462,7 +491,7 @@
                 .order('created_at', { ascending: false });
 
             if (error) {
-                tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-rose-500 font-bold">Error: ${error.message}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-rose-500 font-bold">Error: ${error.message}</td></tr>`;
                 return;
             }
 
@@ -472,7 +501,7 @@
 
             tbody.innerHTML = '';
             if (allSummitRegistrations.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">No registrations found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">No registrations found.</td></tr>`;
                 return;
             }
 
@@ -486,8 +515,6 @@
                     <td class="p-3.5 font-bold text-slate-900">${reg.full_name || '-'}</td>
                     <td class="p-3.5 font-semibold text-slate-600">${reg.batch || '-'}</td>
                     <td class="p-3.5 font-semibold text-slate-700">${reg.mobile || '-'}</td>
-                    <td class="p-3.5 font-bold text-slate-900">${reg.attendees_count || '1'}</td>
-                    <td class="p-3.5"><span class="px-2 py-0.5 ${reg.food_preference === 'Veg' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} border font-bold text-[11px] rounded-md">${reg.food_preference || 'Non-Veg'}</span></td>
                     <td class="p-3.5 text-[11px] text-slate-400 font-semibold">${dateStr}</td>
                 `;
                 tbody.appendChild(tr);
@@ -496,15 +523,13 @@
 
         function exportSummitCSV() {
             if (allSummitRegistrations.length === 0) return alert('No registrations to export.');
-            const headers = ["SL NO", "MEMBERSHIP NO", "FULL NAME", "BATCH", "MOBILE", "ATTENDEES COUNT", "FOOD PREFERENCE", "REGISTERED AT"];
+            const headers = ["SL NO", "MEMBERSHIP NO", "FULL NAME", "BATCH", "MOBILE", "REGISTERED AT"];
             const rows = allSummitRegistrations.map((r, i) => [
                 i + 1,
                 `"${r.membership_no || ''}"`,
                 `"${r.full_name || ''}"`,
                 `"${r.batch || ''}"`,
                 `"${r.mobile || ''}"`,
-                `"${r.attendees_count || '1'}"`,
-                `"${r.food_preference || ''}"`,
                 `"${r.created_at || ''}"`
             ]);
             const csv = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
@@ -534,107 +559,99 @@
         }
 
         function displayDirectory(data) {
-    const container = document.getElementById('directoryContainer');
-    container.innerHTML = '';
+            const container = document.getElementById('directoryContainer');
+            container.innerHTML = '';
 
-    if (data.length === 0) {
-        container.innerHTML = `<div class="col-span-full p-10 text-center text-slate-400 font-bold text-xs bg-white/80 rounded-2xl border border-slate-200">No records found matching your filters.</div>`;
-        return;
-    }
+            if (data.length === 0) {
+                container.innerHTML = `<div class="col-span-full p-8 text-center text-slate-400 font-bold text-xs bg-white/80 rounded-2xl border border-slate-200">No records found.</div>`;
+                return;
+            }
 
-    data.forEach(row => {
-        const fullName = (row['NAME'] || row.name || row.full_name || 'Member').trim();
-        const membNo = row['MEMBERSHIP NUMBER'] || row.membership_number || row.membership_no || 'N/A';
-        const batch = row['BATCH'] || row.batch || '-';
-        const mobile = row['MOBILE'] || row.mobile || row.mobile_number || '';
-        const whatsapp = row['Whatsapp number'] || row.whatsapp_number || mobile;
-        const place = (row['PANCHAYATH/MUNICIPALITY'] || row.panchayath_municipality || row.place || '').trim();
-        const district = (row['DISTRICT'] || row.district || '').trim();
-        const address = (row['ADDRESS'] || row.address || '').trim();
-        const degree = (row['RELIGIOUS DEGREE'] || row.religious_degree || '').trim();
+            data.forEach(row => {
+                const fullName = (row['NAME'] || row.name || row.full_name || 'Member').trim();
+                const membNo = row['MEMBERSHIP NUMBER'] || row.membership_number || row.membership_no || 'N/A';
+                const batch = row['BATCH'] || row.batch || '-';
+                const mobile = row['MOBILE'] || row.mobile || row.mobile_number || '';
+                const whatsapp = row['Whatsapp number'] || row.whatsapp_number || mobile;
+                const place = (row['PANCHAYATH/MUNICIPALITY'] || row.panchayath_municipality || row.place || '').trim();
+                const district = (row['DISTRICT'] || row.district || '').trim();
+                const address = (row['ADDRESS'] || row.address || '').trim();
+                const degree = (row['RELIGIOUS DEGREE'] || row.religious_degree || '').trim();
 
-        const callPhone = cleanNumber(mobile);
-        const waPhone = cleanNumber(whatsapp);
+                const callPhone = cleanNumber(mobile);
+                const waPhone = cleanNumber(whatsapp);
+                const initials = fullName.split(' ').map(n => n[0]).filter(Boolean).slice(0, 2).join('').toUpperCase() || 'FA';
+                const locationText = place ? `${place}${district ? ', ' + district : ''}` : (district || address || 'Kerala');
 
-        // Generate initials for avatar badge
-        const initials = fullName.split(' ').map(n => n[0]).filter(Boolean).slice(0, 2).join('').toUpperCase() || 'FA';
-
-        const locationText = place ? `${place}${district ? ', ' + district : ''}` : (district || address || 'Kerala');
-
-        const card = document.createElement('div');
-        card.className = "group relative bg-white/90 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs hover:shadow-lg hover:border-blue-300 transition-all duration-200 flex flex-col justify-between";
-        card.innerHTML = `
-            <div>
-                <!-- Top Row: Avatar + Info + Batch Pill -->
-                <div class="flex items-start gap-3 pb-3 border-b border-slate-100">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-900 to-indigo-700 text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-2xs">
-                        ${initials}
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <div class="flex items-center justify-between gap-1">
-                            <h4 class="font-extrabold text-slate-900 text-xs sm:text-sm leading-tight truncate group-hover:text-blue-950 transition">${fullName}</h4>
-                            <span class="px-2 py-0.5 bg-slate-100 text-slate-700 font-extrabold text-[10px] rounded-md border border-slate-200 shrink-0 uppercase tracking-wider">${batch}</span>
+                const card = document.createElement('div');
+                card.className = "group relative bg-white/90 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs hover:shadow-lg hover:border-blue-300 transition-all duration-200 flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-start gap-3 pb-3 border-b border-slate-100">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-900 to-indigo-700 text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-2xs">
+                                ${initials}
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center justify-between gap-1">
+                                    <h4 class="font-extrabold text-slate-900 text-xs sm:text-sm leading-tight truncate group-hover:text-blue-950 transition">${fullName}</h4>
+                                    <span class="px-2 py-0.5 bg-slate-100 text-slate-700 font-extrabold text-[10px] rounded-md border border-slate-200 shrink-0 uppercase tracking-wider">${batch}</span>
+                                </div>
+                                <div class="mt-1 flex items-center gap-1.5">
+                                    <span class="text-[10px] font-bold text-blue-900 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100/80 inline-flex items-center gap-1">
+                                        <i class="fa-solid fa-id-badge text-[9px] text-blue-700"></i> ${membNo}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mt-1 flex items-center gap-1.5">
-                            <span class="text-[10px] font-bold text-blue-900 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100/80 inline-flex items-center gap-1">
-                                <i class="fa-solid fa-id-badge text-[9px] text-blue-700"></i> ${membNo}
-                            </span>
+
+                        <div class="py-3 space-y-1.5 text-xs text-slate-600 font-medium">
+                            <div class="flex items-start gap-2">
+                                <i class="fa-solid fa-location-dot w-3.5 text-blue-600 text-xs mt-0.5 shrink-0"></i>
+                                <span class="truncate text-slate-700">${locationText}</span>
+                            </div>
+                            ${degree ? `
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-graduation-cap w-3.5 text-indigo-500 text-xs shrink-0"></i>
+                                <span class="truncate text-slate-600 font-semibold">${degree}</span>
+                            </div>` : `
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-graduation-cap w-3.5 text-slate-400 text-xs shrink-0"></i>
+                                <span class="text-slate-400">FAHM Graduate</span>
+                            </div>`}
                         </div>
                     </div>
-                </div>
 
-                <!-- Middle Details Grid -->
-                <div class="py-3 space-y-1.5 text-xs text-slate-600 font-medium">
-                    <div class="flex items-start gap-2">
-                        <i class="fa-solid fa-location-dot w-3.5 text-blue-600 text-xs mt-0.5 shrink-0"></i>
-                        <span class="truncate text-slate-700">${locationText}</span>
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-1.5">
+                            ${callPhone ? `
+                                <a href="tel:+${callPhone}" class="h-8 px-3 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200/80 font-bold text-xs flex items-center gap-1.5 transition shadow-2xs" title="Call Member">
+                                    <i class="fa-solid fa-phone text-[11px] text-blue-700"></i>
+                                    <span class="text-[11px]">Call</span>
+                                </a>
+                            ` : ''}
+                            ${waPhone ? `
+                                <a href="https://wa.me/${waPhone}" target="_blank" class="h-8 px-3 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200/80 font-bold text-xs flex items-center gap-1.5 transition shadow-2xs" title="WhatsApp Member">
+                                    <i class="fa-brands fa-whatsapp text-sm text-emerald-600"></i>
+                                    <span class="text-[11px]">Chat</span>
+                                </a>
+                            ` : ''}
+                        </div>
+
+                        ${isAdminLoggedIn ? `
+                            <div class="flex items-center gap-1">
+                                <button onclick='openEditModal(${JSON.stringify(row)})' class="w-8 h-8 rounded-lg text-slate-700 bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-xs font-bold border border-slate-200 transition" title="Edit Member">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <button onclick='deleteAlumni("${row.id}")' class="w-8 h-8 rounded-lg text-rose-600 bg-rose-50 hover:bg-rose-100 flex items-center justify-center text-xs font-bold border border-rose-200 transition" title="Delete Member">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        ` : ''}
                     </div>
-                    ${degree ? `
-                    <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-graduation-cap w-3.5 text-indigo-500 text-xs shrink-0"></i>
-                        <span class="truncate text-slate-600 font-semibold">${degree}</span>
-                    </div>` : `
-                    <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-graduation-cap w-3.5 text-slate-400 text-xs shrink-0"></i>
-                        <span class="text-slate-400">FAHM Graduate</span>
-                    </div>`}
-                </div>
-            </div>
-
-            <!-- Bottom Action Buttons Bar -->
-            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                <!-- Contact Buttons -->
-                <div class="flex items-center gap-1.5">
-                    ${callPhone ? `
-                        <a href="tel:+${callPhone}" class="h-8 px-3 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200/80 font-bold text-xs flex items-center gap-1.5 transition shadow-2xs" title="Call Member">
-                            <i class="fa-solid fa-phone text-[11px] text-blue-700"></i>
-                            <span class="text-[11px]">Call</span>
-                        </a>
-                    ` : ''}
-                    ${waPhone ? `
-                        <a href="https://wa.me/${waPhone}" target="_blank" class="h-8 px-3 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200/80 font-bold text-xs flex items-center gap-1.5 transition shadow-2xs" title="WhatsApp Member">
-                            <i class="fa-brands fa-whatsapp text-sm text-emerald-600"></i>
-                            <span class="text-[11px]">Chat</span>
-                        </a>
-                    ` : ''}
-                </div>
-
-                <!-- Admin Action Buttons (Visible only to admin) -->
-                ${isAdminLoggedIn ? `
-                    <div class="flex items-center gap-1">
-                        <button onclick='openEditModal(${JSON.stringify(row)})' class="w-8 h-8 rounded-lg text-slate-700 bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-xs font-bold border border-slate-200 transition" title="Edit Member">
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </button>
-                        <button onclick='deleteAlumni("${row.id}")' class="w-8 h-8 rounded-lg text-rose-600 bg-rose-50 hover:bg-rose-100 flex items-center justify-center text-xs font-bold border border-rose-200 transition" title="Delete Member">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
-                ` : ''}
-            </div>
-        `;
-        container.appendChild(card);
-    });
-}
+                `;
+                container.appendChild(card);
+            });
+        }
 
         function filterDirectory() {
             const searchVal = document.getElementById('searchInput').value.toLowerCase();
