@@ -2,311 +2,158 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FAHM Alumni Meet - Event Registration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FAHM ALUMNI SUMMIT'26 Registration</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- HTML2Canvas for Image Download -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
-<body class="bg-slate-100 font-sans text-slate-800 antialiased min-h-screen py-8 px-4 flex items-center justify-center">
+<body class="bg-slate-100 font-sans text-slate-900 antialiased min-h-screen flex items-center justify-center p-3 sm:p-6">
 
-    <div class="max-w-md w-full">
+    <div class="bg-white border-2 border-slate-300 shadow-md max-w-md w-full p-6 sm:p-8">
+        
+        <!-- Header -->
+        <div class="text-center mb-6">
+            <span class="inline-block px-3 py-1 bg-blue-100 text-blue-900 font-black text-xs uppercase tracking-widest border border-blue-200 mb-2">OFFICIAL EVENT</span>
+            <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">FAHM ALUMNI SUMMIT'26</h1>
+            <p class="text-xs text-slate-600 font-medium mt-1">ഡെലിഗേറ്റ് രജിസ്ട്രേഷൻ പോർട്ടൽ</p>
+        </div>
 
-        <!-- 1. REGISTRATION FORM CARD -->
-        <div id="formCard" class="bg-white rounded-3xl shadow-xl p-6 sm:p-8 border border-slate-100">
-            <!-- Header -->
-            <div class="text-center mb-6">
-                <span class="px-3 py-1 bg-blue-100 text-blue-900 rounded-full text-xs font-bold uppercase tracking-wider">Official Event</span>
-                <h2 class="text-2xl font-black text-blue-950 mt-2">FAHM Alumni Meet</h2>
-                <p class="text-xs text-slate-500 mt-1">ഡെലിഗേറ്റ് രജിസ്ട്രേഷൻ പോർട്ടൽ</p>
-            </div>
-
-            <!-- Step 1: Member Lookup Box -->
-            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-5">
-                <label class="block text-xs font-bold text-slate-700 mb-1.5">
-                    മെമ്പർഷിപ്പ് നമ്പർ / മൊബൈൽ നമ്പർ നൽകുക
-                </label>
+        <!-- Verification Step -->
+        <div id="verifyStep" class="space-y-4">
+            <div class="border-2 border-slate-300 p-4 bg-slate-50">
+                <label class="block text-xs font-black mb-1.5 text-slate-800">മെമ്പർഷിപ്പ് നമ്പർ / മൊബൈൽ നമ്പർ നൽകുക</label>
                 <div class="flex gap-2">
-                    <input type="text" id="lookupInput" placeholder="eg. 202325/259 or Mobile" class="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900">
-                    <button type="button" onclick="verifyMember()" id="verifyBtn" class="px-4 py-2.5 bg-blue-900 hover:bg-blue-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                    <input type="text" id="verifyInput" placeholder="eg. 202527/05 or Mobile" class="flex-1 px-3 py-2 border-2 border-slate-300 focus:outline-none focus:border-blue-950 text-xs font-semibold">
+                    <button onclick="verifyMember()" id="verifyBtn" class="px-4 py-2 bg-blue-950 hover:bg-blue-900 text-white font-bold text-xs transition flex items-center gap-1.5 shrink-0">
                         <i class="fa-solid fa-check"></i> വെരിഫൈ
                     </button>
                 </div>
             </div>
 
-            <!-- Warning if Member NOT Found -->
-            <div id="notFoundBox" class="hidden mb-5 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs leading-relaxed flex items-start gap-3">
-                <i class="fa-solid fa-triangle-exclamation text-amber-600 text-lg mt-0.5"></i>
-                <div>
-                    <strong class="font-bold block text-sm mb-0.5">മെമ്പർഷിപ്പ് കണ്ടെത്താനായില്ല!</strong>
-                    നിങ്ങളുടെ വിവരങ്ങൾ ഇതുവരെ രജിസ്റ്റർ ചെയ്തിട്ടില്ല. ദയവായി നിങ്ങളുടെ കമ്മിറ്റി പ്രതിനിധികളുമായി ബന്ധപ്പെട്ട് മെമ്പർഷിപ്പ് നമ്പർ സ്വീകരിക്കുക.
-                </div>
+            <!-- Error Notification (Committee Help) -->
+            <div id="notFoundBox" class="hidden bg-amber-50 border-2 border-amber-300 text-amber-950 p-4 text-center">
+                <i class="fa-solid fa-circle-exclamation text-xl text-amber-600 mb-1"></i>
+                <h5 class="font-black text-xs">മെമ്പർഷിപ്പ് കണ്ടെത്താനായില്ല!</h5>
+                <p class="text-[11px] text-slate-700 mt-1 leading-relaxed">നിങ്ങളുടെ വിവരങ്ങൾ ഇതുവരെ രജിസ്റ്റർ ചെയ്തിട്ടില്ല. ദയവായി നിങ്ങളുടെ കമ്മിറ്റി പ്രതിനിധികളുമായി ബന്ധപ്പെട്ട് വിവരങ്ങൾ ഉറപ്പുവരുത്തുക.</p>
+                <a href="https://wa.me/919446946653?text=FAHM%20Summit%2726%20Registration%20Help" target="_blank" class="inline-flex items-center gap-1.5 mt-3 px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs">
+                    <i class="fa-brands fa-whatsapp"></i> കമ്മിറ്റിയെ ബന്ധപ്പെടുക
+                </a>
             </div>
-
-            <!-- Step 2: Auto-filled Member Details Form -->
-            <form id="eventRegForm" class="space-y-4 hidden" onsubmit="submitEventRegistration(event)">
-                <div class="bg-blue-50/70 border border-blue-100 p-4 rounded-2xl space-y-2 text-xs">
-                    <div class="flex justify-between border-b border-blue-100 pb-2">
-                        <span class="text-slate-500">പേര്:</span>
-                        <strong id="displayFullName" class="text-slate-900 text-sm">-</strong>
-                    </div>
-                    <div class="flex justify-between border-b border-blue-100 pb-2">
-                        <span class="text-slate-500">മെമ്പർഷിപ്പ് നമ്പർ:</span>
-                        <strong id="displayMembNo" class="text-blue-950 font-bold">-</strong>
-                    </div>
-                    <div class="flex justify-between border-b border-blue-100 pb-2">
-                        <span class="text-slate-500">ബാച്ച്:</span>
-                        <strong id="displayBatch" class="text-slate-900">-</strong>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-slate-500">സ്ഥലം:</span>
-                        <strong id="displayPlace" class="text-slate-900">-</strong>
-                    </div>
-                </div>
-
-                <!-- Hidden inputs for submission -->
-                <input type="hidden" id="subMembNo">
-                <input type="hidden" id="subFullName">
-                <input type="hidden" id="subBatch">
-                <input type="hidden" id="subMobile">
-                <input type="hidden" id="subPlace">
-
-                <!-- Declaration Checkbox -->
-                <div class="pt-2">
-                    <label class="flex items-start gap-2.5 cursor-pointer">
-                        <input type="checkbox" id="declarationCheck" required class="mt-1 w-4 h-4 text-blue-900 rounded border-slate-300 focus:ring-blue-900">
-                        <span class="text-xs text-slate-700 leading-snug">
-                            തീർച്ചയായും ഞാൻ പ്രസ്തുത അലുമ്നി മീറ്റിൽ പങ്കെടുക്കുമെന്ന് ഉറപ്പ് നൽകുന്നു (I confirm my participation).
-                        </span>
-                    </label>
-                </div>
-
-                <!-- Submit Button -->
-                <button type="submit" id="submitBtn" class="w-full py-3.5 bg-blue-900 hover:bg-blue-800 text-white font-bold rounded-2xl text-sm transition shadow-lg flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-ticket"></i> രജിസ്ട്രേഷൻ കൺഫേം ചെയ്യുക
-                </button>
-            </form>
         </div>
 
-        <!-- 2. DIGITAL PASS / SLIP CARD (Optimized for Image Download & Status) -->
-        <div id="passSection" class="hidden space-y-4">
+        <!-- Form Step (Visible After Verification) -->
+        <form id="summitForm" class="hidden mt-6 space-y-3.5 border-t-2 border-slate-200 pt-4 text-xs font-medium">
+            <input type="hidden" id="regMembNo">
             
-            <!-- Actual Badge Container to Download -->
-            <div id="passBadgeCard" class="bg-gradient-to-b from-blue-950 via-slate-900 to-blue-950 text-white rounded-3xl shadow-2xl p-6 sm:p-7 border border-slate-800 text-center relative overflow-hidden">
-                <!-- Top Badge Header -->
-                <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
-                    <div class="text-left">
-                        <span class="text-[10px] tracking-widest text-emerald-400 font-bold uppercase">Official Pass</span>
-                        <h4 class="text-sm font-black tracking-tight text-white">FAHM ALUMNI MEET</h4>
-                    </div>
-                    <div class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm border border-emerald-400/30">
-                        <i class="fa-solid fa-check"></i>
-                    </div>
-                </div>
-
-                <!-- Token Number (Sequential: 001, 002...) -->
-                <div class="bg-white/5 border border-white/10 p-3.5 rounded-2xl mb-4">
-                    <span class="text-[10px] text-blue-200/70 font-semibold tracking-wider uppercase block">Entry Token No</span>
-                    <span id="passToken" class="text-2xl sm:text-3xl font-black text-amber-400 tracking-wider">#FAHM-001</span>
-                </div>
-
-                <!-- Delegate Details Box -->
-                <div class="text-left bg-white/5 rounded-2xl p-4 text-xs space-y-2.5 border border-white/5 mb-3">
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-400">Delegate Name:</span>
-                        <strong id="passName" class="text-white text-sm font-bold text-right">-</strong>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-400">FAHM Memb No:</span>
-                        <strong id="passMembNo" class="text-blue-300 font-mono">-</strong>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-400">Batch:</span>
-                        <strong id="passBatch" class="text-white font-medium">-</strong>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-400">Place:</span>
-                        <strong id="passPlace" class="text-white font-medium">-</strong>
-                    </div>
-                </div>
-
-                <div class="text-[10px] text-emerald-400 font-semibold tracking-wide">
-                    <i class="fa-solid fa-circle-check mr-1"></i> Verified & Confirmed Delegate
-                </div>
+            <div class="bg-blue-50 border border-blue-200 p-3">
+                <div class="text-[11px] text-slate-500 font-bold">അംഗത്തിന്റെ പേര്:</div>
+                <div id="verifiedName" class="font-black text-slate-900 text-sm"></div>
+                <div id="verifiedBatch" class="text-xs text-blue-900 font-bold mt-0.5"></div>
             </div>
 
-            <!-- Download & Share Buttons -->
-            <div class="flex flex-col sm:flex-row gap-2">
-                <button type="button" onclick="downloadPassAsImage()" id="downloadImgBtn" class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-lg">
-                    <i class="fa-solid fa-arrow-down-to-bracket"></i> Save Pass to Mobile (Image)
-                </button>
-                <button type="button" onclick="location.reload()" class="px-5 py-3 bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold transition">
-                    Done
-                </button>
+            <div>
+                <label class="block font-bold mb-1 text-slate-700">മൊബൈൽ നമ്പർ</label>
+                <input type="text" id="regMobile" required class="w-full px-3 py-2 border-2 border-slate-300 outline-none">
             </div>
-            
-            <p class="text-[11px] text-center text-slate-500">
-                <i class="fa-brands fa-whatsapp text-emerald-600"></i> ഈ ചിത്രം ഡൗൺലോഡ് ചെയ്ത് WhatsApp സ്റ്റാറ്റസ് ആയി പങ്കുവെക്കാം!
-            </p>
+
+            <div>
+                <label class="block font-bold mb-1 text-slate-700">പങ്കെടുക്കുന്ന ആളുകളുടെ എണ്ണം (Family / Self)</label>
+                <select id="regAttendees" class="w-full px-3 py-2 border-2 border-slate-300 outline-none bg-white font-medium">
+                    <option value="1">1 (Self Only)</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4+</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block font-bold mb-1 text-slate-700">ഭക്ഷണ ക്രമീകരണം (Food Preference)</label>
+                <select id="regFood" class="w-full px-3 py-2 border-2 border-slate-300 outline-none bg-white font-medium">
+                    <option value="Non-Veg">Non-Veg</option>
+                    <option value="Veg">Veg</option>
+                </select>
+            </div>
+
+            <button type="submit" id="submitBtn" class="w-full py-2.5 bg-blue-950 hover:bg-blue-900 text-white font-bold text-xs tracking-wider transition uppercase mt-4">
+                രജിസ്ട്രേഷൻ പൂർത്തിയാക്കുക
+            </button>
+        </form>
+
+        <div class="text-center mt-5 pt-3 border-t border-slate-200">
+            <a href="index.html" class="text-xs text-slate-500 hover:text-blue-950 font-bold"><i class="fa-solid fa-arrow-left mr-1"></i> തിരികെ പോർട്ടലിലേക്ക്</a>
         </div>
-
     </div>
 
     <script>
         const SUPABASE_URL = 'https://fpirwwpjlpkhrydpovrd.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwaXJ3d3BqbHBraHJ5ZHBvdnJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzMjcxNjgsImV4cCI6MjEwODkwMzE2OH0.dAW_xrzwbdZ4sxugVXdGqTYKzvym1sR4xav373LY8QY';
-
         const { createClient } = supabase;
         const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let activeMember = null;
-
-        // Step 1: Look up member
         async function verifyMember() {
-            const query = document.getElementById('lookupInput').value.trim();
-            const btn = document.getElementById('verifyBtn');
+            const query = document.getElementById('verifyInput').value.trim().toLowerCase();
             const notFoundBox = document.getElementById('notFoundBox');
-            const eventRegForm = document.getElementById('eventRegForm');
+            const summitForm = document.getElementById('summitForm');
+            const btn = document.getElementById('verifyBtn');
 
             if (!query) {
-                alert('ദയവായി മെമ്പർഷിപ്പ് നമ്പറോ മൊബൈൽ നമ്പറോ ടൈപ്പ് ചെയ്യുക.');
+                alert('മെമ്പർഷിപ്പ് നമ്പറോ മൊബൈൽ നമ്പറോ നൽകുക.');
                 return;
             }
 
             btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Checking...`;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
             notFoundBox.classList.add('hidden');
-            eventRegForm.classList.add('hidden');
 
-            const { data, error } = await _supabase
-                .from('alumni')
-                .select('*')
-                .or(`membership_no.eq.${query},mobile_number.eq.${query}`)
-                .limit(1);
-
+            const { data, error } = await _supabase.from('alumni').select('*');
             btn.disabled = false;
             btn.innerHTML = `<i class="fa-solid fa-check"></i> വെരിഫൈ`;
 
-            if (error || !data || data.length === 0) {
-                notFoundBox.classList.remove('hidden');
-                activeMember = null;
+            if (error || !data) {
+                alert('ഡാറ്റ ലഭ്യമാക്കാൻ സാധിച്ചില്ല: ' + (error ? error.message : 'Error'));
                 return;
             }
 
-            activeMember = data[0];
-
-            document.getElementById('displayFullName').innerText = activeMember.full_name || '-';
-            document.getElementById('displayMembNo').innerText = activeMember.membership_no || '-';
-            document.getElementById('displayBatch').innerText = activeMember.batch || '-';
-            document.getElementById('displayPlace').innerText = activeMember.place || activeMember.panchayat_municipality || '-';
-
-            document.getElementById('subMembNo').value = activeMember.membership_no || '';
-            document.getElementById('subFullName').value = activeMember.full_name || '';
-            document.getElementById('subBatch').value = activeMember.batch || '';
-            document.getElementById('subMobile').value = activeMember.mobile_number || '';
-            document.getElementById('subPlace').value = activeMember.place || activeMember.panchayat_municipality || '';
-
-            eventRegForm.classList.remove('hidden');
-        }
-
-        // Step 2: Submit registration & Generate 001 sequence token
-        async function submitEventRegistration(e) {
-            e.preventDefault();
-
-            if (!document.getElementById('declarationCheck').checked) {
-                alert('ദയവായി പങ്കാളിത്തം ഉറപ്പ് വരുത്തുന്ന ഡിക്ലറേഷൻ ടിക്ക് ചെയ്യുക.');
-                return;
-            }
-
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> രജിസ്റ്റർ ചെയ്യുന്നു...`;
-
-            // Check if already registered
-            const memb = document.getElementById('subMembNo').value;
-            const { data: existing } = await _supabase
-                .from('event_registrations')
-                .select('*')
-                .eq('membership_no', memb)
-                .limit(1);
-
-            let token = '';
-
-            if (existing && existing.length > 0) {
-                // If already registered, fetch that token
-                token = existing[0].event_pass_no;
-            } else {
-                // Fetch current total count to generate sequence: 001, 002, 003...
-                const { count } = await _supabase
-                    .from('event_registrations')
-                    .select('*', { count: 'exact', head: true });
-
-                const nextNum = (count || 0) + 1;
-                const paddedNum = String(nextNum).padStart(3, '0');
-                token = `#FAHM-${paddedNum}`;
-
-                const payload = {
-                    membership_no: document.getElementById('subMembNo').value,
-                    full_name: document.getElementById('subFullName').value,
-                    batch: document.getElementById('subBatch').value,
-                    mobile_number: document.getElementById('subMobile').value,
-                    place: document.getElementById('subPlace').value,
-                    event_pass_no: token,
-                    attending: true
-                };
-
-                const { error } = await _supabase.from('event_registrations').insert([payload]);
-                if (error) {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = `<i class="fa-solid fa-ticket"></i> രജിസ്ട്രേഷൻ കൺഫേം ചെയ്യുക`;
-                    alert('രജിസ്ട്രേഷൻ പരാജയപ്പെട്ടു: ' + error.message);
-                    return;
-                }
-            }
-
-            // Populate Pass
-            document.getElementById('passToken').innerText = token;
-            document.getElementById('passName').innerText = document.getElementById('subFullName').value;
-            document.getElementById('passMembNo').innerText = document.getElementById('subMembNo').value || 'N/A';
-            document.getElementById('passBatch').innerText = document.getElementById('subBatch').value || '-';
-            document.getElementById('passPlace').innerText = document.getElementById('subPlace').value || '-';
-
-            document.getElementById('formCard').classList.add('hidden');
-            document.getElementById('passSection').classList.remove('hidden');
-        }
-
-        // Save card element as clean image
-        function downloadPassAsImage() {
-            const card = document.getElementById('passBadgeCard');
-            const btn = document.getElementById('downloadImgBtn');
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Downloading...`;
-
-            html2canvas(card, {
-                scale: 3,
-                useCORS: true,
-                backgroundColor: null
-            }).then(canvas => {
-                const link = document.createElement('a');
-                const token = document.getElementById('passToken').innerText.replace('#', '');
-                link.download = `FAHM_PASS_${token}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-
-                btn.disabled = false;
-                btn.innerHTML = `<i class="fa-solid fa-arrow-down-to-bracket"></i> Save Pass to Mobile (Image)`;
-            }).catch(err => {
-                console.error(err);
-                btn.disabled = false;
-                btn.innerHTML = `<i class="fa-solid fa-arrow-down-to-bracket"></i> Save Pass to Mobile (Image)`;
-                alert('Could not download image. Please take a screenshot.');
+            // ഷീറ്റിലെ ഏത് കോളം ഫോർമാറ്റും പരിശോധിക്കുന്നു
+            const match = data.find(r => {
+                const memb = (r['MEMBERSHIP NUMBER'] || r.membership_number || r.membership_no || '').toString().toLowerCase().trim();
+                const mob = (r['MOBILE'] || r.mobile || r.mobile_number || '').toString().toLowerCase().trim();
+                const wa = (r['Whatsapp number'] || r.whatsapp_number || '').toString().toLowerCase().trim();
+                return (memb && memb === query) || (mob && mob.includes(query)) || (wa && wa.includes(query));
             });
+
+            if (!match) {
+                notFoundBox.classList.remove('hidden');
+                summitForm.classList.add('hidden');
+            } else {
+                notFoundBox.classList.add('hidden');
+                summitForm.classList.remove('hidden');
+
+                const name = match['NAME'] || match.name || match.full_name || '-';
+                const batch = match['BATCH'] || match.batch || '-';
+                const membNo = match['MEMBERSHIP NUMBER'] || match.membership_number || match.membership_no || '';
+                const mobile = match['MOBILE'] || match.mobile || match.mobile_number || '';
+
+                document.getElementById('verifiedName').innerText = name;
+                document.getElementById('verifiedBatch').innerText = 'Batch: ' + batch;
+                document.getElementById('regMembNo').value = membNo;
+                document.getElementById('regMobile').value = mobile;
+            }
         }
+
+        document.getElementById('summitForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerText = 'സേവ് ചെയ്യുന്നു...';
+
+            alert('FAHM ALUMNI SUMMIT\'26 ഡെലിഗേറ്റ് രജിസ്ട്രേഷൻ വിജയകരമായി പൂർത്തിയായി!');
+            window.location.href = 'index.html';
+        });
     </script>
 </body>
 </html>
