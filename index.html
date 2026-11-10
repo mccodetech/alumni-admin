@@ -371,7 +371,7 @@
         let allAlumniData = [];
         let allSummitRegistrations = [];
         let isAdminLoggedIn = false;
-        let deferredPrompt;
+       let deferredPrompt;
 
 // Register Service Worker
 if ('serviceWorker' in navigator) {
@@ -380,18 +380,49 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// Capture direct browser install prompt
+// 1. ആപ്പ് ഇതിനകം ഇൻസ്റ്റാൾ ചെയ്തിട്ടുണ്ടോ എന്ന് പരിശോധിക്കുന്നു (Standalone mode)
+function checkIfAlreadyInstalled() {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    const isInstalledFlag = localStorage.getItem('fahm_app_installed') === 'true';
+
+    if (isStandalone || isInstalledFlag) {
+        const installBtn = document.getElementById('installAppBtn');
+        if (installBtn) installBtn.style.display = 'none'; // ഇൻസ്റ്റാൾ ചെയ്തുകഴിഞ്ഞാൽ ബട്ടൺ തനിയെ മറയും
+    }
+}
+
+// 2. ബ്രൗസറിന്റെ ഇൻസ്റ്റാൾ പ്രോംപ്റ്റ് പിടിച്ചെടുക്കുന്നു
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
 });
 
+// 3. ആപ്പ് ഇൻസ്റ്റാൾ ആയിക്കഴിഞ്ഞാൽ ബട്ടൺ ഹൈഡ് ചെയ്യുന്നു
+window.addEventListener('appinstalled', () => {
+    localStorage.setItem('fahm_app_installed', 'true');
+    const installBtn = document.getElementById('installAppBtn');
+    if (installBtn) installBtn.style.display = 'none';
+    deferredPrompt = null;
+});
+
+// 4. ഇൻസ്റ്റാൾ ബട്ടൺ ക്ലിക്ക് ചെയ്യുമ്പോൾ
 function triggerAppInstall() {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    
+    if (isStandalone || localStorage.getItem('fahm_app_installed') === 'true') {
+        alert("FAHM Alumni ആപ്പ് ഇതിനകം നിങ്ങളുടെ ഫോണിൽ ഇൻസ്റ്റാൾ ചെയ്തിട്ടുണ്ട്! നിങ്ങളുടെ ഹോം സ്ക്രീനിൽ നിന്നോ ആപ്പ് ലിസ്റ്റിൽ നിന്നോ തുറക്കാവുന്നതാണ്.");
+        const installBtn = document.getElementById('installAppBtn');
+        if (installBtn) installBtn.style.display = 'none';
+        return;
+    }
+
     if (deferredPrompt) {
         deferredPrompt.prompt();
         deferredPrompt.userChoice.then((choiceResult) => {
             if (choiceResult.outcome === 'accepted') {
-                console.log('User installed the app');
+                localStorage.setItem('fahm_app_installed', 'true');
+                const installBtn = document.getElementById('installAppBtn');
+                if (installBtn) installBtn.style.display = 'none';
             }
             deferredPrompt = null;
         });
@@ -399,6 +430,9 @@ function triggerAppInstall() {
         alert("ആപ്പ് ഇൻസ്റ്റാൾ ചെയ്യാനായി ബ്രൗസറിലെ മുകളിലെ 3 കുത്തുകളിൽ (⋮) ക്ലിക്ക് ചെയ്ത് 'Install app' അല്ലെങ്കിൽ 'Add to Home screen' നൽകുക.");
     }
 }
+
+// പേജ് ലോഡ് ചെയ്യുമ്പോൾ പരിശോധിക്കുന്നു
+window.addEventListener('DOMContentLoaded', checkIfAlreadyInstalled);
 
         function cleanNumber(num) {
             if (!num) return '';
