@@ -534,70 +534,107 @@
         }
 
         function displayDirectory(data) {
-            const container = document.getElementById('directoryContainer');
-            container.innerHTML = '';
+    const container = document.getElementById('directoryContainer');
+    container.innerHTML = '';
 
-            if (data.length === 0) {
-                container.innerHTML = `<div class="col-span-full p-8 text-center text-slate-400 font-bold text-xs bg-white/80 rounded-2xl border border-slate-200">No records found.</div>`;
-                return;
-            }
+    if (data.length === 0) {
+        container.innerHTML = `<div class="col-span-full p-10 text-center text-slate-400 font-bold text-xs bg-white/80 rounded-2xl border border-slate-200">No records found matching your filters.</div>`;
+        return;
+    }
 
-            data.forEach(row => {
-                const fullName = row['NAME'] || row.name || row.full_name || '-';
-                const membNo = row['MEMBERSHIP NUMBER'] || row.membership_number || row.membership_no || 'N/A';
-                const batch = row['BATCH'] || row.batch || '-';
-                const mobile = row['MOBILE'] || row.mobile || row.mobile_number || '';
-                const whatsapp = row['Whatsapp number'] || row.whatsapp_number || mobile;
-                const place = row['PANCHAYATH/MUNICIPALITY'] || row.panchayath_municipality || row.place || '';
-                const district = row['DISTRICT'] || row.district || '';
-                const degree = row['RELIGIOUS DEGREE'] || row.religious_degree || '-';
+    data.forEach(row => {
+        const fullName = (row['NAME'] || row.name || row.full_name || 'Member').trim();
+        const membNo = row['MEMBERSHIP NUMBER'] || row.membership_number || row.membership_no || 'N/A';
+        const batch = row['BATCH'] || row.batch || '-';
+        const mobile = row['MOBILE'] || row.mobile || row.mobile_number || '';
+        const whatsapp = row['Whatsapp number'] || row.whatsapp_number || mobile;
+        const place = (row['PANCHAYATH/MUNICIPALITY'] || row.panchayath_municipality || row.place || '').trim();
+        const district = (row['DISTRICT'] || row.district || '').trim();
+        const address = (row['ADDRESS'] || row.address || '').trim();
+        const degree = (row['RELIGIOUS DEGREE'] || row.religious_degree || '').trim();
 
-                const callPhone = cleanNumber(mobile);
-                const waPhone = cleanNumber(whatsapp);
+        const callPhone = cleanNumber(mobile);
+        const waPhone = cleanNumber(whatsapp);
 
-                const card = document.createElement('div');
-                card.className = "bg-white p-4.5 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col justify-between hover:shadow-md hover:border-slate-300 transition duration-150";
-                card.innerHTML = `
-                    <div>
-                        <div class="flex justify-between items-start gap-2 mb-2 pb-2.5 border-b border-slate-100">
-                            <div class="min-w-0">
-                                <h4 class="font-extrabold text-slate-900 text-sm sm:text-base leading-tight truncate">${fullName}</h4>
-                                <span class="text-[10px] text-blue-900 font-extrabold bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100 mt-1 inline-block">Memb. No: ${membNo}</span>
-                            </div>
-                            <span class="px-2 py-0.5 bg-slate-100 text-slate-700 font-extrabold text-[11px] rounded-lg border border-slate-200 shrink-0">${batch}</span>
+        // Generate initials for avatar badge
+        const initials = fullName.split(' ').map(n => n[0]).filter(Boolean).slice(0, 2).join('').toUpperCase() || 'FA';
+
+        const locationText = place ? `${place}${district ? ', ' + district : ''}` : (district || address || 'Kerala');
+
+        const card = document.createElement('div');
+        card.className = "group relative bg-white/90 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs hover:shadow-lg hover:border-blue-300 transition-all duration-200 flex flex-col justify-between";
+        card.innerHTML = `
+            <div>
+                <!-- Top Row: Avatar + Info + Batch Pill -->
+                <div class="flex items-start gap-3 pb-3 border-b border-slate-100">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-900 to-indigo-700 text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-2xs">
+                        ${initials}
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center justify-between gap-1">
+                            <h4 class="font-extrabold text-slate-900 text-xs sm:text-sm leading-tight truncate group-hover:text-blue-950 transition">${fullName}</h4>
+                            <span class="px-2 py-0.5 bg-slate-100 text-slate-700 font-extrabold text-[10px] rounded-md border border-slate-200 shrink-0 uppercase tracking-wider">${batch}</span>
                         </div>
-
-                        <div class="space-y-1.5 text-xs text-slate-600 my-3 font-medium">
-                            <div class="flex items-center gap-2"><i class="fa-solid fa-location-dot w-3.5 text-blue-600 text-xs"></i> <span class="truncate">${place} ${district ? '(' + district + ')' : ''}</span></div>
-                            <div class="flex items-center gap-2"><i class="fa-solid fa-graduation-cap w-3.5 text-slate-400 text-xs"></i> <span class="truncate">${degree}</span></div>
+                        <div class="mt-1 flex items-center gap-1.5">
+                            <span class="text-[10px] font-bold text-blue-900 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100/80 inline-flex items-center gap-1">
+                                <i class="fa-solid fa-id-badge text-[9px] text-blue-700"></i> ${membNo}
+                            </span>
                         </div>
                     </div>
+                </div>
 
-                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-1.5 mt-1">
-                        <div class="flex gap-1.5">
-                            ${callPhone ? `
-                                <a href="tel:+${callPhone}" class="w-8.5 h-8 bg-blue-50 hover:bg-blue-100 text-blue-900 rounded-lg border border-blue-100 flex items-center justify-center transition shadow-2xs" title="Call">
-                                    <i class="fa-solid fa-phone text-xs"></i>
-                                </a>
-                            ` : ''}
-                            ${waPhone ? `
-                                <a href="https://wa.me/${waPhone}" target="_blank" class="w-8.5 h-8 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg border border-emerald-100 flex items-center justify-center transition shadow-2xs" title="WhatsApp">
-                                    <i class="fa-brands fa-whatsapp text-sm"></i>
-                                </a>
-                            ` : ''}
-                        </div>
-
-                        ${isAdminLoggedIn ? `
-                            <div class="flex gap-1">
-                                <button onclick='openEditModal(${JSON.stringify(row)})' class="px-2.5 py-1 text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold border border-slate-200"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button onclick='deleteAlumni("${row.id}")' class="px-2.5 py-1 text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg text-xs font-bold border border-rose-100"><i class="fa-solid fa-trash-can"></i></button>
-                            </div>
-                        ` : ''}
+                <!-- Middle Details Grid -->
+                <div class="py-3 space-y-1.5 text-xs text-slate-600 font-medium">
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-location-dot w-3.5 text-blue-600 text-xs mt-0.5 shrink-0"></i>
+                        <span class="truncate text-slate-700">${locationText}</span>
                     </div>
-                `;
-                container.appendChild(card);
-            });
-        }
+                    ${degree ? `
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-graduation-cap w-3.5 text-indigo-500 text-xs shrink-0"></i>
+                        <span class="truncate text-slate-600 font-semibold">${degree}</span>
+                    </div>` : `
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-graduation-cap w-3.5 text-slate-400 text-xs shrink-0"></i>
+                        <span class="text-slate-400">FAHM Graduate</span>
+                    </div>`}
+                </div>
+            </div>
+
+            <!-- Bottom Action Buttons Bar -->
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                <!-- Contact Buttons -->
+                <div class="flex items-center gap-1.5">
+                    ${callPhone ? `
+                        <a href="tel:+${callPhone}" class="h-8 px-3 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200/80 font-bold text-xs flex items-center gap-1.5 transition shadow-2xs" title="Call Member">
+                            <i class="fa-solid fa-phone text-[11px] text-blue-700"></i>
+                            <span class="text-[11px]">Call</span>
+                        </a>
+                    ` : ''}
+                    ${waPhone ? `
+                        <a href="https://wa.me/${waPhone}" target="_blank" class="h-8 px-3 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200/80 font-bold text-xs flex items-center gap-1.5 transition shadow-2xs" title="WhatsApp Member">
+                            <i class="fa-brands fa-whatsapp text-sm text-emerald-600"></i>
+                            <span class="text-[11px]">Chat</span>
+                        </a>
+                    ` : ''}
+                </div>
+
+                <!-- Admin Action Buttons (Visible only to admin) -->
+                ${isAdminLoggedIn ? `
+                    <div class="flex items-center gap-1">
+                        <button onclick='openEditModal(${JSON.stringify(row)})' class="w-8 h-8 rounded-lg text-slate-700 bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-xs font-bold border border-slate-200 transition" title="Edit Member">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button onclick='deleteAlumni("${row.id}")' class="w-8 h-8 rounded-lg text-rose-600 bg-rose-50 hover:bg-rose-100 flex items-center justify-center text-xs font-bold border border-rose-200 transition" title="Delete Member">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
 
         function filterDirectory() {
             const searchVal = document.getElementById('searchInput').value.toLowerCase();
