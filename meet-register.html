@@ -10,61 +10,67 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+    </style>
 </head>
 <body class="bg-slate-100 font-sans text-slate-900 antialiased min-h-screen flex items-center justify-center p-3 sm:p-6">
 
-    <div class="bg-white border-2 border-slate-300 shadow-md max-w-md w-full p-6 sm:p-8">
+    <div class="bg-white border-2 border-slate-300 shadow-md w-full max-w-md p-4 sm:p-7 mx-auto">
         
-        <!-- Header -->
-        <div class="text-center mb-6">
-            <span class="inline-block px-3 py-1 bg-blue-100 text-blue-900 font-black text-xs uppercase tracking-widest border border-blue-200 mb-2">OFFICIAL EVENT</span>
-            <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">FAHM ALUMNI SUMMIT'26</h1>
-            <p class="text-xs text-slate-600 font-medium mt-1">ഡെലിഗേറ്റ് രജിസ്ട്രേഷൻ പോർട്ടൽ</p>
+        <!-- Header Section -->
+        <div class="text-center mb-5 pb-3 border-b-2 border-slate-200">
+            <span class="inline-block px-3 py-0.5 bg-blue-100 text-blue-900 font-black text-[10px] sm:text-xs uppercase tracking-widest border border-blue-300 mb-2">OFFICIAL EVENT</span>
+            <h1 class="text-lg sm:text-2xl font-black text-slate-900 tracking-tight leading-snug">FAHM ALUMNI SUMMIT'26</h1>
+            <p class="text-xs text-slate-600 font-semibold mt-1">ഡെലിഗേറ്റ് രജിസ്ട്രേഷൻ പോർട്ടൽ</p>
         </div>
 
         <!-- Verification Step -->
-        <div id="verifyStep" class="space-y-4">
-            <div class="border-2 border-slate-300 p-4 bg-slate-50">
-                <label class="block text-xs font-black mb-1.5 text-slate-800">മെമ്പർഷിപ്പ് നമ്പർ / മൊബൈൽ നമ്പർ നൽകുക</label>
-                <div class="flex gap-2">
-                    <input type="text" id="verifyInput" placeholder="eg. 202527/05 or Mobile" class="flex-1 px-3 py-2 border-2 border-slate-300 focus:outline-none focus:border-blue-950 text-xs font-semibold">
-                    <button onclick="verifyMember()" id="verifyBtn" class="px-4 py-2 bg-blue-950 hover:bg-blue-900 text-white font-bold text-xs transition flex items-center gap-1.5 shrink-0">
+        <div id="verifyStep" class="space-y-3.5">
+            <div class="border-2 border-slate-300 p-3.5 sm:p-4 bg-slate-50">
+                <label class="block text-xs font-black mb-2 text-slate-800">മെമ്പർഷിപ്പ് നമ്പർ / മൊബൈൽ നൽകുക</label>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <input type="text" id="verifyInput" placeholder="eg. 202527/05 or Mobile" class="w-full px-3 py-2 border-2 border-slate-300 focus:outline-none focus:border-blue-950 text-xs font-semibold bg-white">
+                    <button onclick="verifyMember()" id="verifyBtn" class="w-full sm:w-auto px-4 py-2 bg-blue-950 hover:bg-blue-900 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shrink-0 shadow-xs">
                         <i class="fa-solid fa-check"></i> വെരിഫൈ
                     </button>
                 </div>
             </div>
 
-            <!-- Error Notification (Committee Help) -->
+            <!-- Error Notification Box -->
             <div id="notFoundBox" class="hidden bg-amber-50 border-2 border-amber-300 text-amber-950 p-4 text-center">
                 <i class="fa-solid fa-circle-exclamation text-xl text-amber-600 mb-1"></i>
                 <h5 class="font-black text-xs">മെമ്പർഷിപ്പ് കണ്ടെത്താനായില്ല!</h5>
-                <p class="text-[11px] text-slate-700 mt-1 leading-relaxed">നിങ്ങളുടെ വിവരങ്ങൾ ഇതുവരെ രജിസ്റ്റർ ചെയ്തിട്ടില്ല. ദയവായി നിങ്ങളുടെ കമ്മിറ്റി പ്രതിനിധികളുമായി ബന്ധപ്പെട്ട് വിവരങ്ങൾ ഉറപ്പുവരുത്തുക.</p>
+                <p class="text-[11px] text-slate-700 mt-1 leading-relaxed font-medium">നിങ്ങളുടെ വിവരങ്ങൾ ഇതുവരെ രജിസ്റ്റർ ചെയ്തിട്ടില്ല. ദയവായി നിങ്ങളുടെ കമ്മിറ്റി പ്രതിനിധികളുമായി ബന്ധപ്പെട്ട് ഉറപ്പുവരുത്തുക.</p>
                 <a href="https://wa.me/919446946653?text=FAHM%20Summit%2726%20Registration%20Help" target="_blank" class="inline-flex items-center gap-1.5 mt-3 px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs">
                     <i class="fa-brands fa-whatsapp"></i> കമ്മിറ്റിയെ ബന്ധപ്പെടുക
                 </a>
             </div>
         </div>
 
-        <!-- Form Step (Visible After Verification) -->
-        <form id="summitForm" class="hidden mt-6 space-y-3.5 border-t-2 border-slate-200 pt-4 text-xs font-medium">
+        <!-- Registration Form (Appears upon verification) -->
+        <form id="summitForm" class="hidden mt-4 space-y-3 border-t-2 border-slate-200 pt-4 text-xs font-medium">
             <input type="hidden" id="regMembNo">
             <input type="hidden" id="regFullName">
             <input type="hidden" id="regBatchVal">
             
-            <div class="bg-blue-50 border border-blue-200 p-3">
+            <div class="bg-blue-50 border-2 border-blue-200 p-3">
                 <div class="text-[11px] text-slate-500 font-bold">അംഗത്തിന്റെ പേര്:</div>
-                <div id="verifiedName" class="font-black text-slate-900 text-sm"></div>
+                <div id="verifiedName" class="font-black text-slate-900 text-sm mt-0.5"></div>
                 <div id="verifiedBatch" class="text-xs text-blue-900 font-bold mt-0.5"></div>
             </div>
 
             <div>
                 <label class="block font-bold mb-1 text-slate-700">മൊബൈൽ നമ്പർ</label>
-                <input type="text" id="regMobile" required class="w-full px-3 py-2 border-2 border-slate-300 outline-none">
+                <input type="text" id="regMobile" required class="w-full px-3 py-2 border-2 border-slate-300 focus:outline-none focus:border-blue-950 font-semibold">
             </div>
 
             <div>
                 <label class="block font-bold mb-1 text-slate-700">പങ്കെടുക്കുന്ന ആളുകളുടെ എണ്ണം (Family / Self)</label>
-                <select id="regAttendees" class="w-full px-3 py-2 border-2 border-slate-300 outline-none bg-white font-medium">
+                <select id="regAttendees" class="w-full px-3 py-2 border-2 border-slate-300 focus:outline-none focus:border-blue-950 bg-white font-semibold">
                     <option value="1">1 (Self Only)</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
@@ -74,19 +80,21 @@
 
             <div>
                 <label class="block font-bold mb-1 text-slate-700">ഭക്ഷണ ക്രമീകരണം (Food Preference)</label>
-                <select id="regFood" class="w-full px-3 py-2 border-2 border-slate-300 outline-none bg-white font-medium">
+                <select id="regFood" class="w-full px-3 py-2 border-2 border-slate-300 focus:outline-none focus:border-blue-950 bg-white font-semibold">
                     <option value="Non-Veg">Non-Veg</option>
                     <option value="Veg">Veg</option>
                 </select>
             </div>
 
-            <button type="submit" id="submitBtn" class="w-full py-2.5 bg-blue-950 hover:bg-blue-900 text-white font-bold text-xs tracking-wider transition uppercase mt-4">
+            <button type="submit" id="submitBtn" class="w-full py-2.5 bg-blue-950 hover:bg-blue-900 text-white font-bold text-xs tracking-wider transition uppercase mt-4 shadow-sm">
                 രജിസ്ട്രേഷൻ പൂർത്തിയാക്കുക
             </button>
         </form>
 
         <div class="text-center mt-5 pt-3 border-t border-slate-200">
-            <a href="index.html" class="text-xs text-slate-500 hover:text-blue-950 font-bold"><i class="fa-solid fa-arrow-left mr-1"></i> തിരികെ പോർട്ടലിലേക്ക്</a>
+            <a href="index.html" class="text-xs text-slate-600 hover:text-blue-950 font-bold inline-flex items-center gap-1.5">
+                <i class="fa-solid fa-arrow-left"></i> തിരികെ പോർട്ടലിലേക്ക്
+            </a>
         </div>
     </div>
 
@@ -148,7 +156,6 @@
             }
         }
 
-        // Form Submit Handler (Saves directly to Supabase event_registrations)
         document.getElementById('summitForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
