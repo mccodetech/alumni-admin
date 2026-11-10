@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
@@ -372,26 +373,32 @@
         let isAdminLoggedIn = false;
         let deferredPrompt;
 
-        // PWA Install Event Listener
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-        });
+// Register Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW failed', err));
+    });
+}
 
-        function triggerAppInstall() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('User installed FAHM app');
-                    }
-                    deferredPrompt = null;
-                });
-            } else {
-                // Friendly guide if already installed or on iOS Safari
-                alert("To install FAHM Alumni App:\n\n• Android: Tap the 3 dots on your browser menu -> Tap 'Install app' or 'Add to Home screen'\n\n• iPhone / iPad: Tap the Share button -> Tap 'Add to Home Screen'");
+// Capture direct browser install prompt
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+});
+
+function triggerAppInstall() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('User installed the app');
             }
-        }
+            deferredPrompt = null;
+        });
+    } else {
+        alert("ആപ്പ് ഇൻസ്റ്റാൾ ചെയ്യാനായി ബ്രൗസറിലെ മുകളിലെ 3 കുത്തുകളിൽ (⋮) ക്ലിക്ക് ചെയ്ത് 'Install app' അല്ലെങ്കിൽ 'Add to Home screen' നൽകുക.");
+    }
+}
 
         function cleanNumber(num) {
             if (!num) return '';
